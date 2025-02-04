@@ -10,6 +10,8 @@ Each change must contain a relevant commit message describing the scope and cont
 
 After the proposed change is made on the individual branch, the result must be reported to Jakub -> the team leader and other members involved with the scope of the change, for example in case of backend modifications that would be Szymon.
 
+If the modification is done by Jakub, he should consult relevant people still and explain the changes made before merging with the main branch.
+
 Only after the change is accepted by the leader and related members, can it be merged into the main branch.
 
 All communication between team members happens through our Telegram group chat, or google.meet meetings planned beforehand.
