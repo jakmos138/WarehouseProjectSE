@@ -1,0 +1,52 @@
+.account{
+    width: 1180px;
+    height: auto;
+    margin: 75px 64px 32px 297px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+}
+.account-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+}
+.account img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+    border: 10px solid #395B64;
+}
+.account h2{
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+.account button{
+    width: 160px;
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 45px; 
+    
+    background-color: #395B64; 
+    color: white;
+    border: 2px solid #2C4E56;
+    border-radius: 12px; 
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    
+    font-size: 16px; 
+    font-weight: 500; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.account button:hover {
+    background-color: #2C4E56;
+    box-shadow: 0
+}
