@@ -91,7 +91,7 @@ The following error status codes are common for all (or most) endpoints with giv
  - `403 Forbidden` **POST, PUT, DELETE** - User is logged in, but does not have sufficient permissions to perform the operation. Required permissions are specified on each endpoint;
  - `404 Not Found` - URL is unrecognized;
  - `404 Not Found` **GET, PUT, DELETE** - For endpoints with URL parameters, requested resource does not exist;
- - `409 Conflict` **POST, PUT** - Adding or updating a resource would cause an invalid state of that resource. Typically caused by attempts to point a foreign key field (which typically ends with `_id`) to a nonexistent resource;
+ - `409 Conflict` **POST, PUT** - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a unique constraint violation or an attempt to point a foreign key field (which typically ends with `_id`) to a nonexistent resource;
  - `500 Internal Server Error` - Unexpected error during request processing. *Let's hope there won't be many of those.*
 Exceptions from this rule are specified per endpoint.
 

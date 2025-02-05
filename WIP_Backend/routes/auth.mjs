@@ -3,6 +3,7 @@ import passport from 'passport';
 import passport_local from 'passport-local';
 const LocalStrategy = passport_local.Strategy;
 import crypto from 'node:crypto';
+import formidable, {errors as formidableErrors} from 'formidable';
 import { repo } from '../repo.mjs';
 
 passport.use(new LocalStrategy(
@@ -40,28 +41,30 @@ passport.deserializeUser(function(id, cb) {
 let router = express.Router();
 
 let signup = function(req, res, next) {
-  console.log("Signup request received:", req.body);
-  repo.getUserByName(req.body.username, function(err, user) {
-    if (err) { return next(err); }
-    if (user) {
-      console.log("User already exists:", req.body.username);
-      return res.status(400).send("User already exists");
-    }
-
-    crypto.pbkdf2(req.body.password, 'alts', 2**18, 64, 'sha256', function(err, hashed) {
+  const form = formidable({});
+  form.parse(req, (err, fields, files) => {
+    let data = {
+      username: fields.username[0],
+      email: fields.email[0],
+      password: fields.password[0],
+    };
+    console.log("Signup request received:", data.username);
+    crypto.pbkdf2(data.password, 'alts', 2**18, 64, 'sha256', function(err, hashed) {
       if (err) { return next(err); }
       
-      repo.addUser(req.body.username, hashed, function(err, newUser) {
-        if (err) { return next(err); }
-        
-        req.login(newUser, function(err) {
-          if (err) { return next(err); }
-          console.log("User registered and logged in:", newUser.username);
-          res.status(201).send("User registered and logged in");
-        });
+      repo.addUser(req, data, function(err, out) {
+        repo.errorHandling(err, res, () => {
+          let newUser = out.recordset[0];
+
+          req.login(newUser, function(err) {
+            if (err) { return next(err); }
+            console.log("User registered and logged in:", newUser.username);
+            res.status(201).send("User registered and logged in");
+          });
+        })
       });
     });
-  });
+  })  
 }
 
 router.post("/signup", signup);

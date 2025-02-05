@@ -87,22 +87,25 @@ class Repo {
   }
 
   addUser = function(req, user, cb) {
-    if (req.user === undefined || req.user.permission_level > user.permission_level) return cb(this.UNAUTHORIZED);
-    getUserByName(user.username, (err, res) => {
+    // the line below if we want to have the accounts created by other users (admins) only
+    // if (req.user === undefined || req.user.permission_level > user.permission_level) return cb(this.UNAUTHORIZED);
+    this.getUserByName(user.username, (err, res) => {
       if (err == null) return cb(this.CONFLICT);
       else if (err != this.NOT_FOUND) return cb(err);
       let sr;
       try {
         sr = this.pool.request().input('username', sql.VarChar, user.username)
         .input('password', sql.VarChar, user.password)
-        .input('phone', sql.VarChar, user.phone)
+        .input('phone', sql.VarChar, "+00000000000")
         .input('email', sql.VarChar, user.email)
-        .input('permission_level', sql.Int, user.permission_level);
+        .input('permission_level', sql.Int, 0);
       }
       catch {
         return cb(this.MALFORMED);
       }
-      sr.query("INSERT INTO dbo.Users (username, password, phone, email, permission_level) VALUES(@username, @password, @phone, @email, @permission_level);")
+      sr.query(`INSERT INTO dbo.Users (username, password, phone, email, permission_level)
+        OUTPUT inserted.user_id, inserted.username
+        VALUES(@username, @password, @phone, @email, @permission_level);`) // user_id is enough for serialization?
       .then(res => {
         cb(null, res);
       })
@@ -113,7 +116,7 @@ class Repo {
   }
 
   editUser = function(req, id, user, cb) {
-    getUserById(id, (err, res) => {
+    this.getUserById(id, (err, res) => {
       if (err != null) return cb(err);
       if (req.user === undefined || req.user.permission_level > user.permission_level || req.user.permission_level > res.permission_level) return cb(this.UNAUTHORIZED);
       let sr;
@@ -139,7 +142,7 @@ class Repo {
   }
 
   deleteUser = function(req, id, cb) {
-    getUserById(id, (err, res) => {
+    this.getUserById(id, (err, res) => {
       if (err != null) return cb(err);
       if (req.user === undefined || req.user.permission_level > res.permission_level) return cb(this.UNAUTHORIZED);
       let sr;
@@ -277,7 +280,7 @@ class Repo {
   }
 
   updateItem = function(req, id, item, cb) {
-    getItemById(id, (err, res) => {
+    this.getItemById(id, (err, res) => {
       if (err != null) return cb(err);
       if (req.user === undefined || req.user.permission_level > res.restricted_level || req.user.permission_level > item.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
@@ -325,7 +328,7 @@ class Repo {
   }
 
   deleteItem = function(req, id, cb) {
-    getItemById(id, (err, res) => {
+    this.getItemById(id, (err, res) => {
       if (err != null) return cb(err);
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
@@ -419,7 +422,7 @@ class Repo {
   }
 
   updateItemType = function(req, id, itype, cb) {
-    getItemTypeById(id, (err, res) => {
+    this.getItemTypeById(id, (err, res) => {
       if (req.user === undefined || req.user.permission_level > itype.restricted_level || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -444,7 +447,7 @@ class Repo {
   }
 
   deleteItemType = function(req, id, cb) {
-    getItemTypeById(id, (err, res) => {
+    this.getItemTypeById(id, (err, res) => {
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -515,7 +518,7 @@ class Repo {
   }
 
   updateLocation = function(req, id, loc, cb) {
-    getLocationById(id, (err, res) => {
+    this.getLocationById(id, (err, res) => {
       if (req.user === undefined || req.user.permission_level > loc.restricted_level || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -539,7 +542,7 @@ class Repo {
   }
 
   deleteLocation = function(req, id, cb) {
-    getLocationById(id, (err, res) => {
+    this.getLocationById(id, (err, res) => {
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
