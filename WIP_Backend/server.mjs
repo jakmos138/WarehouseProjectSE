@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.config();
+
 import express from 'express';
 import express_session from 'express-session';
 import passport from 'passport';
@@ -12,14 +15,16 @@ import FileStore_ from 'session-file-store';
 const FileStore = FileStore_(express_session);
 import cors from 'cors';
 
-
 import router_auth from './routes/auth.mjs'
 import router_items from './routes/items.mjs'
 import router_itemtypes from './routes/itemtypes.mjs'
 import router_locations from './routes/locations.mjs'
 
-import dotenv from 'dotenv'
-dotenv.config();
+repo.connect(process.env.DB_SERVER,
+             process.env.DB_PORT,
+             process.env.DB_NAME,
+             process.env.DB_USER,
+             process.env.DB_PWD);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

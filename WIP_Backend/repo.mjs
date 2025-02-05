@@ -1,29 +1,38 @@
 const crypto = await import('node:crypto');
 
-import sql from "mssql/msnodesqlv8.js";
-const conf = {
-  connectionString: process.env.DB_CONN
-};
+import sql from "mssql";
 
 sql.on("error", err => {
 
 });
 
-const pool = await sql.connect(conf);
-
 
 class Repo {
   constructor() {
+    this.pool = null;
     this.NOT_FOUND = Symbol();
     this.CONFLICT = Symbol();
     this.MALFORMED = Symbol();
     this.UNAUTHORIZED = Symbol();
   }
 
+  connect = async function(server, port, db, user, pwd) {
+    this.pool = await sql.connect({
+      server: server,
+      port: port,
+      database: db,
+      user: user,
+      password: pwd,
+      options: {
+        trustServerCertificate: true
+      }
+    });
+  }
+
   getUserByName = function(username, cb) {
     let sr;
     try {
-      sr = pool.request().input('username', sql.VarChar, username);
+      sr = this.pool.request().input('username', sql.VarChar, username);
     }
     catch {
       return cb(this.MALFORMED);
@@ -42,7 +51,7 @@ class Repo {
   getUserByEmail = function(email, cb) {
     let sr;
     try {
-      sr = pool.request().input('email', sql.VarChar, email);
+      sr = this.pool.request().input('email', sql.VarChar, email);
     }
     catch (e) {
       return cb(this.MALFORMED);
@@ -61,7 +70,7 @@ class Repo {
   getUserById = function(id, cb) {
     let sr;
     try {
-      sr = pool.request().input('id', sql.Int, id);
+      sr = this.pool.request().input('id', sql.Int, id);
     }
     catch {
       return cb(this.MALFORMED);
@@ -84,7 +93,7 @@ class Repo {
       else if (err != this.NOT_FOUND) return cb(err);
       let sr;
       try {
-        sr = pool.request().input('username', sql.VarChar, user.username)
+        sr = this.pool.request().input('username', sql.VarChar, user.username)
         .input('password', sql.VarChar, user.password)
         .input('phone', sql.VarChar, user.phone)
         .input('email', sql.VarChar, user.email)
@@ -109,7 +118,7 @@ class Repo {
       if (req.user === undefined || req.user.permission_level > user.permission_level || req.user.permission_level > res.permission_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
-        sr = pool.request().input('id', sql.Int, id)
+        sr = this.pool.request().input('id', sql.Int, id)
         .input('username', sql.VarChar, user.username)
         .input('password', sql.VarChar, user.password)
         .input('phone', sql.VarChar, user.phone)
@@ -135,7 +144,7 @@ class Repo {
       if (req.user === undefined || req.user.permission_level > res.permission_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
-        sr = pool.request().input('id', sql.Int, id);
+        sr = this.pool.request().input('id', sql.Int, id);
       }
       catch {
         return cb(this.MALFORMED);
@@ -153,7 +162,7 @@ class Repo {
   getUserPermissions = function(id, cb) {
     let sr;
     try {
-      sr = pool.request().input('id', sql.Int, id);
+      sr = this.pool.request().input('id', sql.Int, id);
     }
     catch {
       return cb(this.MALFORMED);
@@ -207,7 +216,7 @@ class Repo {
   getItemById = function(id, cb) {
     let sr;
     try {
-      sr = pool.request().input('id', sql.Int, id);
+      sr = this.pool.request().input('id', sql.Int, id);
     }
     catch {
       return cb(this.MALFORMED);
@@ -249,7 +258,7 @@ class Repo {
     if (req.user === undefined || req.user.permission_level > item.restricted_level) return cb(this.UNAUTHORIZED);
     let sr;
     try {
-      sr = pool.request().input('item_id', sql.VarChar, item.item_id)
+      sr = this.pool.request().input('item_id', sql.VarChar, item.item_id)
       .input('location_id', sql.VarChar, item.location_id)
       .input('details', sql.VarChar, item.details)
       .input('quantity', sql.Decimal, item.quantity)
@@ -273,7 +282,7 @@ class Repo {
       if (req.user === undefined || req.user.permission_level > res.restricted_level || req.user.permission_level > item.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
-        sr = pool.request().input('item_index', sql.Int, id)
+        sr = this.pool.request().input('item_index', sql.Int, id)
         .input('item_id', sql.Int, item.item_id)
         .input('location_id', sql.Int, item.location_id)
         .input('details', sql.VarChar, item.details)
@@ -321,7 +330,7 @@ class Repo {
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
-        sr = pool.request().input('item_index', sql.Int, id);
+        sr = this.pool.request().input('item_index', sql.Int, id);
       }
       catch {
         return cb(this.MALFORMED);
@@ -371,7 +380,7 @@ class Repo {
   getItemTypeById = function(id, cb) {
     let sr;
     try {
-      sr = pool.request().input('id', sql.Int, id);
+      sr = this.pool.request().input('id', sql.Int, id);
     }
     catch {
       return cb(this.MALFORMED);
@@ -392,7 +401,7 @@ class Repo {
     if (req.user === undefined || req.user.permission_level > itype.restricted_level) return cb(this.UNAUTHORIZED);
     let sr;
     try {
-      sr = pool.request().input('name', sql.VarChar, itype.name)
+      sr = this.pool.request().input('name', sql.VarChar, itype.name)
       .input('description', sql.VarChar, itype.description)
       .input('price', sql.Decimal, itype.price)
       .input('restricted_level', sql.Int, itype.restricted_level);
@@ -414,7 +423,7 @@ class Repo {
       if (req.user === undefined || req.user.permission_level > itype.restricted_level || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
-        sr = pool.request().input('item_id', sql.Int, id)
+        sr = this.pool.request().input('item_id', sql.Int, id)
         .input('name', sql.VarChar, itype.name)
         .input('description', sql.VarChar, itype.description)
         .input('price', sql.Decimal, itype.price)
@@ -439,7 +448,7 @@ class Repo {
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
-        sr = pool.request().input('item_id', sql.VarChar, id)
+        sr = this.pool.request().input('item_id', sql.VarChar, id)
       }
       catch {
         return cb(this.MALFORMED);
@@ -468,7 +477,7 @@ class Repo {
   getLocationById = function(id, cb) {
     let sr;
     try {
-      sr = pool.request().input('id', sql.Int, id);
+      sr = this.pool.request().input('id', sql.Int, id);
     }
     catch {
       return cb(this.MALFORMED);
@@ -489,7 +498,7 @@ class Repo {
     if (req.user === undefined || req.user.permission_level > loc.restricted_level) return cb(this.UNAUTHORIZED);
     let sr;
     try {
-      sr = pool.request().input('name', sql.VarChar, loc.name)
+      sr = this.pool.request().input('name', sql.VarChar, loc.name)
       .input('description', sql.VarChar, loc.description)
       .input('restricted_level', sql.Int, loc.restricted_level);
     }
@@ -510,7 +519,7 @@ class Repo {
       if (req.user === undefined || req.user.permission_level > loc.restricted_level || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
-        sr = pool.request().input('location_id', sql.Int, id)
+        sr = this.pool.request().input('location_id', sql.Int, id)
         .input('name', sql.VarChar, loc.name)
         .input('description', sql.VarChar, loc.description)
         .input('restricted_level', sql.Int, loc.restricted_level);
@@ -534,7 +543,7 @@ class Repo {
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
-        sr = pool.request().input('location_id', sql.VarChar, id)
+        sr = this.pool.request().input('location_id', sql.VarChar, id)
       }
       catch {
         return cb(this.MALFORMED);
