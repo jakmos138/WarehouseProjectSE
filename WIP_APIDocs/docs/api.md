@@ -63,9 +63,11 @@ The full specification of `data` varies between requests.
 `error` is not `null` if and only if a `4xx` or `5xx` status code is returned.
 
 The request body follows more complex rules:
- - data can be sent as `application/x-www-form-urlencoded`, `application/json` or `multipart/form-data`. For endpoints that accept files, only `multipart/form-data` is accepted;
- - the request body specification never contains nested objects;
- - fields not in the specification are ignored.
+
+- data can be sent as `application/x-www-form-urlencoded`, `application/json` or `multipart/form-data`. For endpoints that accept files, only `multipart/form-data` is accepted;
+- the request body specification never contains nested objects;
+- fields not in the specification are ignored.
+
 If, for example, the specification for a request body is:
 ```
 {
@@ -79,20 +81,23 @@ Of course, the types must match. When sending data as `application/json`, make s
 
 ## Success responses
 The following success status codes are typically returned by endpoints with the given methods:
- - `200 OK` **GET**;
- - `201 Created` **POST** - the response typically contains the ID of the created resource;
- - `204 No Content` **PUT, DELETE**
+
+- `200 OK` **GET**;
+- `201 Created` **POST** - the response typically contains the ID of the created resource;
+- `204 No Content` **PUT, DELETE**
 Exceptions from this rule are specified per endpoint.
 
 ## Error responses
 The following error status codes are common for all (or most) endpoints with given request methods:
- - `400 Bad Request` **POST, PUT** - Request is malformed. Typically caused by type mismatch in URL parameters, request body, or missing required fields;
- - `401 Unauthorized` - User is not logged in;
- - `403 Forbidden` **POST, PUT, DELETE** - User is logged in, but does not have sufficient permissions to perform the operation. Required permissions are specified on each endpoint;
- - `404 Not Found` - URL is unrecognized;
- - `404 Not Found` **GET, PUT, DELETE** - For endpoints with URL parameters, requested resource does not exist;
- - `409 Conflict` **POST, PUT** - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a unique constraint violation or an attempt to point a foreign key field (which typically ends with `_id`) to a nonexistent resource;
- - `500 Internal Server Error` - Unexpected error during request processing. *Let's hope there won't be many of those.*
+
+- `400 Bad Request` **POST, PUT** - Request is malformed. Typically caused by type mismatch in URL parameters, request body, or missing required fields;
+- `401 Unauthorized` - User is not logged in;
+- `403 Forbidden` **POST, PUT, DELETE** - User is logged in, but does not have sufficient permissions to perform the operation. Required permissions are specified on each endpoint;
+- `404 Not Found` - URL is unrecognized;
+- `404 Not Found` **GET, PUT, DELETE** - For endpoints with URL parameters, requested resource does not exist;
+- `409 Conflict` **POST, PUT** - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a unique constraint violation or an attempt to point a foreign key field (which typically ends with `_id`) to a nonexistent resource;
+- `500 Internal Server Error` - Unexpected error during request processing. *Let's hope there won't be many of those.*
+
 Exceptions from this rule are specified per endpoint.
 
 ## List of endpoints

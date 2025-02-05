@@ -40,6 +40,9 @@
                             <li class="nav-item">
                                 <a href="./" class="nav-link active" aria-current="page">API</a>
                             </li>
+                            <li class="nav-item">
+                                <a href="../db_jak/" class="nav-link">DB Help</a>
+                            </li>
                         </ul>
 
                     <ul class="nav navbar-nav ms-md-auto">
@@ -54,7 +57,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a rel="next" class="nav-link disabled">
+                                <a rel="next" href="../db_jak/" class="nav-link">
                                     Next <i class="fa fa-arrow-right"></i>
                                 </a>
                             </li>
@@ -187,7 +190,7 @@ Exceptions from this rule are specified per endpoint.</p>
  - <code>403 Forbidden</code> <strong>POST, PUT, DELETE</strong> - User is logged in, but does not have sufficient permissions to perform the operation. Required permissions are specified on each endpoint;
  - <code>404 Not Found</code> - URL is unrecognized;
  - <code>404 Not Found</code> <strong>GET, PUT, DELETE</strong> - For endpoints with URL parameters, requested resource does not exist;
- - <code>409 Conflict</code> <strong>POST, PUT</strong> - Adding or updating a resource would cause an invalid state of that resource. Typically caused by attempts to point a foreign key field (which typically ends with <code>_id</code>) to a nonexistent resource;
+ - <code>409 Conflict</code> <strong>POST, PUT</strong> - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a unique constraint violation or an attempt to point a foreign key field (which typically ends with <code>_id</code>) to a nonexistent resource;
  - <code>500 Internal Server Error</code> - Unexpected error during request processing. <em>Let's hope there won't be many of those.</em>
 Exceptions from this rule are specified per endpoint.</p>
 <h2 id="list-of-endpoints">List of endpoints</h2>
