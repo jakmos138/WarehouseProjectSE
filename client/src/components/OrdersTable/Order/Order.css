@@ -1,0 +1,39 @@
+.status-in-stock{
+    background-color: #66BB6A;
+    width: fit-content;
+    border-radius: 8px;
+    padding: 0 8px;
+    margin-right: auto;
+    margin-left: auto;
+}
+.status-out-stock{
+    background-color:#FFA726;
+    width: fit-content;
+    border-radius: 8px;
+    padding: 0 8px;
+}
+.delete-btn{
+    width: fit-content;
+    justify-content: center;
+    align-items: center;
+    background-color: #D3D3D3;
+    color: black;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    padding: 4px 8px;
+    height: 40px;
+}
+.delete-btn:hover{
+    background-color: #EF5350;
+}
+.delete-btn img{
+    width: auto;
+    height: 32px;
+   
+}
