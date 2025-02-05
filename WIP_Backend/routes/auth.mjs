@@ -39,7 +39,7 @@ passport.deserializeUser(function(id, cb) {
 
 let router = express.Router();
 
-/*let signup = function(req, res, next) {
+let signup = function(req, res, next) {
   console.log("Signup request received:", req.body);
   repo.getUserByName(req.body.username, function(err, user) {
     if (err) { return next(err); }
@@ -64,7 +64,7 @@ let router = express.Router();
   });
 }
 
-router.post("/signup", signup);*/
+router.post("/signup", signup);
 
 router.post("/signin", passport.authenticate('local', {
   successRedirect: "/",
