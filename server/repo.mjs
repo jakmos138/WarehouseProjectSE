@@ -388,12 +388,33 @@ class Repo {
     catch {
       return cb(this.MALFORMED);
     }
-    sr.query(`SELECT item_id, name, description, price, restricted_level FROM dbo.ItemTypes
-                WHERE item_id = @id`)
+    sr.query(`WITH TCTE AS (
+                SELECT item_id, name, description, price, restricted_level AS t_rl
+                FROM dbo.ItemTypes
+                WHERE item_id = 1
+              )
+              SELECT TCTE.*, ITP.property_id, ITP.name AS p_name, ITP.description AS p_desc, ITP.type AS p_type FROM TCTE
+                LEFT JOIN dbo.ItemTypeProperties AS ITP ON ITP.item_id = TCTE.item_id;`)
     .then(res => {
       let rs = res.recordset;
       if (rs.length == 0) return cb(this.NOT_FOUND);
-      cb(null, rs[0]);
+      let e = rs[0];
+      let ae = {id: e.item_id,
+        name: e.name,
+        description: e.description,
+        price: e.price,
+        properties: [],
+        restricted_level: e.t_rl
+      };
+      rs.forEach(f => {
+        if (f.property_id !== null) ae.properties.push({
+          property_id: f.property_id,
+          name: f.p_name,
+          description: f.p_desc,
+          type: f.p_type
+        });
+      });
+      cb(null, ae);
     })
     .catch(err => {
       cb(err);

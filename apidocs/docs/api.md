@@ -179,7 +179,7 @@ An item type and location with a matching `item_id` and `location_id` respective
 `item_index` is the ID of the newly created item.
 
 ### GET `/api/items/:item_index`
-Gets a specific item batch.
+Gets a specific item batch and all its property values.
 
 **Response Data**
 ```
@@ -200,6 +200,12 @@ Gets a specific item batch.
     },
     details: string?,
     quantity: decimal(4),
+    properties: [{
+        property_id: int,
+        name: string,
+        type: string,
+        value: string?
+    }]
     restricted_level: int
 }
 ```
@@ -273,7 +279,7 @@ restricted_level: int
 `item_id` is the ID of the newly defined item type.
 
 ### GET `/api/itemtypes/:item_id`
-Gets a specific item type.
+Gets a specific item type and all its properties.
 
 **Response Data**
 ```
@@ -282,6 +288,12 @@ Gets a specific item type.
     name: string,
     description: string,
     price: decimal(2),
+    properties: [{
+        property_id: int,
+        name: string,
+        description: string,
+        type: string
+    }]
     restricted_level: int
 }
 ```
