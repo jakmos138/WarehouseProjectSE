@@ -336,30 +336,9 @@ class Repo {
       catch {
         return cb(this.MALFORMED);
       }
-      sql.query(`DELETE FROM dbo.Items WHERE item_index = @item_index;`)
+      sr.query(`DELETE FROM dbo.Items WHERE item_index = @item_index;`)
       .then(res => {
-        let rs = res.recordset;
-        if (rs.length == 0) return cb(this.NOT_FOUND);
-        let e = rs[0];
-        let ae = {id: e.item_index,
-                  type: {
-                    id: e.item_id,
-                    name: e.t_name,
-                    description: e.t_desc,
-                    price: e.price,
-                    restricted_level: e.t_rl
-                  },
-                  location: {
-                    id: e.location_id,
-                    name: e.l_name,
-                    description: e.l_desc,
-                    restricted_level: e.l_rl
-                  },
-                  details: e.details,
-                  quantity: e.quantity,
-                  restricted_level: e.i_rl
-          };
-        cb(null, ae);
+        cb(null, res);
       })
       .catch(err => {
         cb(err);
