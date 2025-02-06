@@ -30,10 +30,95 @@ thead th {
 tr{
     height: 60px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
     align-items: center;
     text-align: center;
     justify-content: center;
     border-top: 1px solid #e0e0e0;
     cursor: pointer;
 }
+.create-item-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    width: 160px;
+    font-size: 18px;
+    
+}
+
+.create-item-btn:hover {
+    background-color: #45a049;
+}
+
+.create-item-form {
+    margin: 20px 0;
+}
+
+.create-item-form label {
+    display: block;
+    margin: 10px 0;
+}
+
+.create-item-form input {
+    padding: 8px;
+    width: 100%;
+    margin: 5px 0;
+}
+
+.create-item-form button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.create-item-form button:hover {
+    background-color: #45a049;
+}
+
+
+
+
+
+
+
+.create-item-btn {
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.create-item-btn:hover {
+    background-color: #45a049;
+}
+
+/* Modal styles */
+.modal-overlay {
+    position: fixed; /* Fixed positioning to cover the whole screen */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure the modal is above all content */
+}
+
+.create-item-modal {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 500px;
+    width: 100%;
+}
+

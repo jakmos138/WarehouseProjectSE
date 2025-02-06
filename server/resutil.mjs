@@ -15,6 +15,7 @@ const sendSuccess = function(res, code, data = null) {
 
 const sendError = function(res, code, err = null) {
     if (err == null && errorMessages[code] !== undefined) err = errorMessages[code];
+    console.log(`Error response sent: ${err} (${code})`);
     res.status(code).json({
         error: err,
         data: null}

@@ -7,7 +7,7 @@ const SignIn = (props: any) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  
+
   const navigate = useNavigate();
 
   async function submit(e: React.FormEvent, isSignUp: boolean = false) {
@@ -29,7 +29,7 @@ const SignIn = (props: any) => {
       props.setSignedIn(true);
       alert(`${isSignUp ? 'Registration' : 'Login'} Successful!`);
       navigate('/');
-      
+
     } catch (err: any) {
       if (err.response) {
         setError(err.response.data.message || "Invalid username or password");

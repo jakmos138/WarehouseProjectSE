@@ -4,7 +4,7 @@ import { sendSuccess, sendError } from "./resutil.mjs";
 import sql from "mssql";
 
 sql.on("error", err => {
-
+  console.log(err);
 });
 
 

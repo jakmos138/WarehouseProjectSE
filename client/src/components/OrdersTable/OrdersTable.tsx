@@ -1,100 +1,100 @@
-import Order from './Order/Order'
-import './OrdersTable.css'
-import axios from 'axios'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Order from './Order/Order';
+import './OrdersTable.css';
+import CreateItem from './CreateItem/CreateItem';
 
 const OrdersTable = () => {
-
-    const [data, setData] = useState(null)
+    const [data, setData] = useState([]);  // State to store fetched data
+    const [loading, setLoading] = useState(true); // State to manage loading state
+    const [error, setError] = useState(null); // State to handle errors
+    const [showCreateForm, setShowCreateForm] = useState(false); // State to manage form visibility
 
     useEffect(() => {
-        axios.get('http://localhost:3000/items/')
-        .then((response) => {
-            setData(response.data)
+        axios.get('http://localhost:3000/api/items/', {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
         })
-    }, [])
+        .then((response) => {
+            setData(response.data.data);
+            setLoading(false);
+        })
+        .catch((err) => {
+            setError("Error fetching data");
+            setLoading(false);
+        });
+    }, []);
 
-    console.log(data)
+    const deleteItem = (itemId) => {
+        axios.delete(`http://localhost:3000/api/items/${itemId}`, {
+            headers: { 'Content-Type': 'application/json' },
+            withCredentials: true,
+        })
+        .then((response) => {
+            setData(data.filter(item => item.id !== itemId));
+        })
+        .catch((err) => {
+            setError("Error deleting item");
+        });
+    };
 
-  return (
-    <div className="orders-table">
-        <table>
-            <thead>
-                <tr>
-                    <th>Product Name</th>
-                    <th>In stock availability</th>
-                    <th>Delivery status</th>
-                    <th>Price</th>
-                    <th>Processing time</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/>
+    const handleItemCreated = (newItem) => {
+        setData([...data, newItem]);  // Add the newly created item to the list
+        setShowCreateForm(false);  // Hide the form after submission
+    };
 
-<Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/>
-                <Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/>
-                    <Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/>
-                    <Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/>
-                    <Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/>
-                    <Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/>
-                    <Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/>
-                    <Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/><Order 
-                    orderName = "Product"
-                    availability = "In stock"
-                    status = "To be delivered"
-                    price = "15$"
-                    time = "38 hours"/>
-                
-            </tbody>
-        </table>
-    </div>
-  )
-}
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
-export default OrdersTable
+    if (error) {
+        return <div>{error}</div>;
+    }
+
+    return (
+        <div className="orders-table">
+            <button onClick={() => setShowCreateForm(!showCreateForm)} className="create-item-btn">
+                {showCreateForm ? 'Cancel' : 'Create Item'}
+            </button>
+
+            {/* Modal for CreateItem */}
+            {showCreateForm && (
+                <div className="modal-overlay">
+                    <CreateItem onItemCreated={handleItemCreated} onClose={() => setShowCreateForm(false)} />
+                </div>
+            )}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product Name</th>
+                        <th>Description</th>
+                        <th>Location</th>
+                        <th>Price</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {data.length > 0 ? (
+                        data.map((item, index) => (
+                            <Order
+                                key={index}
+                                orderName={item.type.name}
+                                description={item.type.description}
+                                location={item.location.name}
+                                price={item.type.price}
+                                deleteItem={() => deleteItem(item.id)}  // Pass deleteItem as prop
+                            />
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="5">No orders found</td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+        </div>
+    );
+};
+
+export default OrdersTable;
