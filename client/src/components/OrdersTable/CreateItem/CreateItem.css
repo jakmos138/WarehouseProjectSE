@@ -41,8 +41,9 @@
 
 /* Label Styling */
 .create-item-form label {
-    display: block;
-    
+    display: flex;
+    flex-direction: column;
+   
     margin-bottom: 5px;
     color: #333;
 }

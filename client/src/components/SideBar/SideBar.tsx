@@ -8,12 +8,6 @@ const SideBar = (props:any) => {
 
   return (
     <div className='sidebar'>
-        <Link to='/dashboard'>
-          <div className="dashboard">
-              <img src={DashboardIcon} alt="" />
-              <p>Dashboard</p>
-          </div>
-        </Link>
         <Link to='/orders'>
         <div className="orders">
             <img src={OrdersIcon} alt="" />
