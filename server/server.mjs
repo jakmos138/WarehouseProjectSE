@@ -1,4 +1,4 @@
-import dotenv from 'dotenv'
+import dotenv from 'dotenv';
 dotenv.config();
 
 import express from 'express';
@@ -15,11 +15,12 @@ import FileStore_ from 'session-file-store';
 const FileStore = FileStore_(express_session);
 import cors from 'cors';
 
-import router_auth from './routes/auth.mjs'
-import router_items from './routes/items.mjs'
-import router_itemtypes from './routes/itemtypes.mjs'
-import router_locations from './routes/locations.mjs'
+import router_auth from './routes/auth.mjs';
+import router_items from './routes/items.mjs';
+import router_itemtypes from './routes/itemtypes.mjs';
+import router_locations from './routes/locations.mjs';
 
+<<<<<<< Updated upstream
 try {
   repo.connect(process.env.DB_SERVER,
     process.env.DB_PORT,
@@ -31,6 +32,13 @@ catch(e) {
   console.log(e);
 }
 
+=======
+repo.connect(process.env.DB_SERVER,
+  process.env.DB_PORT,
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PWD);
+>>>>>>> Stashed changes
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -38,7 +46,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 app.use(cors({
   origin: `http://localhost:${process.env.FRONTEND_PORT}`,
-  credentials: true                 
+  credentials: true
 }));
 const port = process.env.BACKEND_PORT;
 
@@ -46,9 +54,8 @@ app.use(express_session({
   secret: 'i can\'t think of a conword for now',
   resave: false,
   saveUninitialized: true,
-  // cookie: { secure: true }, this won't work without HTTPS
-  store: new FileStore()
-  // set up store, likely via repo
+  store: new FileStore(),
+  cookie: { secure: false, httpOnly: false, sameSite: 'Strict' }
 }));
 app.use(passport.initialize());
 app.use(passport.session());
