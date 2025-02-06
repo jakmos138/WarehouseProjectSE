@@ -1,6 +1,6 @@
 import express from 'express';
 import formidable, {errors as formidableErrors} from 'formidable';
-import { repo, errorHandling as repoErrorHandling } from '../repo.mjs';
+import { repo } from '../repo.mjs';
 import { checkLogin, checkPerm } from '../perm.mjs';
 
 let router = express.Router();
@@ -23,7 +23,7 @@ router.post("/", checkPerm(4), (req, res) => {
   const form = formidable({});
   form.parse(req, (err, fields, files) => {
     if (err) {
-      next(err);
+      res.status(500).send("500 Internal Server Error");
       return;
     }
     repo.addItem(req, fields, (err, data) => {
@@ -37,7 +37,7 @@ router.put("/:itemId", checkPerm(5), (req, res) => {
   const form = formidable({});
   form.parse(req, (err, fields, files) => {
     if (err) {
-      next(err);
+      res.status(500).send("500 Internal Server Error");
       return;
     }
     repo.updateItem(req, req.params.itemId, fields, (err, data) => {

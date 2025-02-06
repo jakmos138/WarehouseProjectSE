@@ -13,10 +13,10 @@ function App() {
 
   return (
     <BrowserRouter>
-      {/* {!signedIn ? (
+       {!signedIn ? (
         <SignIn setSignedIn={setSignedIn} />
-      ) : ( */}
-        {/* <> */}
+      ) : ( 
+        <>
           <Header />
           <SideBar />
           <Routes>
@@ -24,8 +24,8 @@ function App() {
             <Route path='/orders' element={<Orders />} />
             <Route path='/dashboard' element={<Dashboard />} />
           </Routes>
-        {/* </> */}
-      {/* )} */}
+        </>
+     )}
     </BrowserRouter>
   );
 }

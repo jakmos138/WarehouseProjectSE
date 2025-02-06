@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const SignIn = (props: any) => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   
@@ -16,7 +16,7 @@ const SignIn = (props: any) => {
       const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/signin';
       const response = await axios.post(
         `http://localhost:3000${endpoint}`,
-        {email, password },
+        { username, password },  // Sending username instead of email
         {
           headers: {
             'Content-Type': 'application/json'
@@ -25,34 +25,35 @@ const SignIn = (props: any) => {
       );
       
       console.log(`${isSignUp ? 'Registration' : 'Login'} successful:`, response.data);
+      if(response.data.token) {
+        props.setSignedIn(true);
+      }
       alert(`${isSignUp ? 'Registration' : 'Login'} Successful!`);
       navigate('/');
-      props.setSignedIn(true);
-    } catch (err: any) {
       
+    } catch (err: any) {
       if (err.response) {
-        setError(err.response.data.message || "Invalid email or password");
+        setError(err.response.data.message || "Invalid username or password");
       } else {
         setError("An error occurred, please try again");
       }
       console.error(`${isSignUp ? 'Registration' : 'Login'} error:`, err.response?.data || err.message);
     }
   }
-  
 
   return (
     <div className="signin-container">
       <h2>{error ? 'Error' : 'Sign In'}</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={(e) => submit(e)}>
-        <label htmlFor="email">Email</label>
+        <label htmlFor="username">Username</label>
         <input
-          type="email"
-          id="email"
-          name="email"
+          type="text"
+          id="username"
+          name="username"
           required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
         />
         <label htmlFor="password">Password</label>
         <input

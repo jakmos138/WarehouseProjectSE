@@ -6,21 +6,22 @@ import crypto from 'node:crypto';
 import { repo } from '../repo.mjs';
 
 passport.use(new LocalStrategy(
+  { usernameField: 'email' },  // Explicitly setting usernameField to 'email'
   function(email, password, cb) {
     repo.getUserByEmail(email, function(err, user) {
       if (err) { return cb(err); }
       if (!user) {
         return cb(null, false, { message: "Incorrect username or password." });
       }
-      /*crypto.pbkdf2(password, "alts", 2 ** 18, 64, 'sha256', function(err, hashed) {
+
+      // Secure password comparison
+      crypto.pbkdf2(password, "alts", 2 ** 18, 64, 'sha256', function(err, hashed) {
         if (err) { return cb(err); }
         if (!crypto.timingSafeEqual(user.pwhash, hashed)) {
           return cb(null, false, { message: "Incorrect username or password." });
         }
         return cb(null, user);
-      });*/
-      if (password === user.password) return cb(null, user);
-      else return cb(null, false, { message: "Incorrect username or password." });
+      });
     });
   }
 ));
@@ -39,7 +40,7 @@ passport.deserializeUser(function(id, cb) {
 
 let router = express.Router();
 
-/*let signup = function(req, res, next) {
+let signup = function(req, res, next) {
   console.log("Signup request received:", req.body);
   repo.getUserByName(req.body.username, function(err, user) {
     if (err) { return next(err); }
@@ -64,7 +65,7 @@ let router = express.Router();
   });
 }
 
-router.post("/signup", signup);*/
+router.post("/signup", signup);
 
 router.post("/signin", passport.authenticate('local', {
   successRedirect: "/",
@@ -78,11 +79,9 @@ router.get("/profile", (req, res) => {
   res.json(profile);
 });
 
-router.delete('/signout', (req, res, next) => {
-  req.logout(function(err) {
-    if (err) { return next(err); }
-    res.redirect("/");
-  });
+router.delete('/signout', (req, res) => {
+  req.logout();
+  res.redirect("/");
 });
 
 export default router;
