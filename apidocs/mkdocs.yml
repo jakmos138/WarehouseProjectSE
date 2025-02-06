@@ -1,0 +1,5 @@
+site_name: Warehouse Project
+nav:
+  - Home: index.md
+  - API: api.md
+  - DB Help: db_jak.md

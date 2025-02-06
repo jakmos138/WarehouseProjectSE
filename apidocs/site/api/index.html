@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../img/favicon.ico">
+        <title>API - Warehouse Project</title>
+        <link href="../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../css/fontawesome.min.css" rel="stylesheet">
+        <link href="../css/brands.min.css" rel="stylesheet">
+        <link href="../css/solid.min.css" rel="stylesheet">
+        <link href="../css/v4-font-face.min.css" rel="stylesheet">
+        <link href="../css/base.css" rel="stylesheet">
+        <link id="hljs-light" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" >
+        <link id="hljs-dark" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github-dark.min.css" disabled>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+        <script>hljs.highlightAll();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="..">Warehouse Project</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbar-collapse" aria-controls="navbar-collapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="nav-item">
+                                <a href=".." class="nav-link">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="./" class="nav-link active" aria-current="page">API</a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../db_jak/" class="nav-link">DB Help</a>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ms-md-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href=".." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../db_jak/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-bs-toggle="collapse" data-bs-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-body-tertiary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-bs-level="1"><a href="#warehouse-system-rest-api" class="nav-link">Warehouse System REST API</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-bs-level="2"><a href="#request-and-response-body-syntax" class="nav-link">Request and response body syntax</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#request-and-response-structure" class="nav-link">Request and response structure</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#success-responses" class="nav-link">Success responses</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#error-responses" class="nav-link">Error responses</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+            <li class="nav-item" data-bs-level="2"><a href="#list-of-endpoints" class="nav-link">List of endpoints</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="warehouse-system-rest-api">Warehouse System REST API</h1>
+<h2 id="request-and-response-body-syntax">Request and response body syntax</h2>
+<p>The syntax used for the response structure in this document is similar to JSON, but with types instead of values, for example:</p>
+<pre><code>{
+    key1: type1,
+    key2: {
+        subkey1: subtype1,
+        subkey2: subtype2
+    },
+    key3: type3
+}
+</code></pre>
+<p>The possible types are:</p>
+<h3 id="type"><code>[type]</code></h3>
+<p>Array of items of type <code>type</code>.</p>
+<h3 id="type_1"><code>type?</code></h3>
+<p>Item of type <code>type</code> or <code>null</code>.</p>
+<h3 id="bool"><code>bool</code></h3>
+<p><code>true</code> or <code>false</code>.</p>
+<h3 id="int"><code>int</code></h3>
+<p>Integer.</p>
+<h3 id="decimal"><code>decimal</code></h3>
+<p>Real number with precision given by digits to the right of the decimal point.</p>
+<h3 id="decimaln"><code>decimal(n)</code></h3>
+<p><code>decimal</code> with fixed precision – <code>n</code> digits to the right of the decimal point.</p>
+<h3 id="string"><code>string</code></h3>
+<p>String of characters.</p>
+<h3 id="timestamp"><code>timestamp</code></h3>
+<p>Timestamp. <em>How the timestamp is passed is to be decided.</em></p>
+<h3 id="object"><code>object</code></h3>
+<p>Generic object. Wherever possible, the full specification of the object is specified rather than <code>object</code>.</p>
+<p>URL parameters are specified like this in a given endpoint:
+<code>/url/:param</code>
+All URL parameters are <code>int</code>s that correspond to resource IDs.</p>
+<h2 id="request-and-response-structure">Request and response structure</h2>
+<p>The response body is in JSON format. If, for example, the object's description is:</p>
+<pre><code>{
+    key1: int,
+    key2: string
+}
+</code></pre>
+<p>then the following JSON data could be received for that object:</p>
+<pre><code>{
+    &quot;key1&quot;: 123,
+    &quot;key2&quot;: &quot;Hello from API Docs&quot;
+}
+</code></pre>
+<p>The general form of the response body is:</p>
+<pre><code>{
+    error: string?,
+    data: object?
+}
+</code></pre>
+<p>The full specification of <code>data</code> varies between requests.
+<code>data</code> is not <code>null</code> if and only if a success status code other than <code>204 No Content</code> is returned.
+<code>error</code> is not <code>null</code> if and only if a <code>4xx</code> or <code>5xx</code> status code is returned.</p>
+<p>The request body follows more complex rules:</p>
+<ul>
+<li>data can be sent as <code>application/x-www-form-urlencoded</code>, <code>application/json</code> or <code>multipart/form-data</code>. For endpoints that accept files, only <code>multipart/form-data</code> is accepted;</li>
+<li>the request body specification never contains nested objects;</li>
+<li>fields not in the specification are ignored.</li>
+</ul>
+<p>If, for example, the specification for a request body is:</p>
+<pre><code>{
+    key1: int,
+    key2: string,
+    key3: int?
+}
+</code></pre>
+<p>then the request body is expected to have <code>key1</code>, <code>key2</code>, and optionally <code>key3</code> fields. Not passing an optional field is interpreted the same as passing the field with value <code>null</code>.
+Of course, the types must match. When sending data as <code>application/json</code>, make sure to pass numbers, and not their string representations, for <code>int</code> and <code>decimal</code> types.</p>
+<h2 id="success-responses">Success responses</h2>
+<p>The following success status codes are typically returned by endpoints with the given methods:</p>
+<ul>
+<li><code>200 OK</code> <strong>GET</strong>;</li>
+<li><code>201 Created</code> <strong>POST</strong> - the response typically contains the ID of the created resource;</li>
+<li><code>204 No Content</code> <strong>PUT, DELETE</strong>
+Exceptions from this rule are specified per endpoint.</li>
+</ul>
+<h2 id="error-responses">Error responses</h2>
+<p>The following error status codes are common for all (or most) endpoints with given request methods:</p>
+<ul>
+<li><code>400 Bad Request</code> <strong>POST, PUT, DELETE</strong> - Request is malformed. Typically caused by type mismatch in URL parameters, request body, or missing required fields;</li>
+<li><code>401 Unauthorized</code> - User is not logged in;</li>
+<li><code>403 Forbidden</code> <strong>POST, PUT, DELETE</strong> - User is logged in, but does not have sufficient permissions to perform the operation. Required permissions are specified on each endpoint;</li>
+<li><code>404 Not Found</code> - URL is unrecognized;</li>
+<li><code>404 Not Found</code> <strong>GET, PUT, DELETE</strong> - For endpoints with URL parameters, requested resource does not exist;</li>
+<li><code>409 Conflict</code> <strong>POST, PUT</strong> - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a UNIQUE or FOREIGN_KEY constraint violation;</li>
+<li><code>500 Internal Server Error</code> - Unexpected error during request processing. <em>Let's hope there won't be many of those.</em></li>
+</ul>
+<p>Exceptions from this rule are specified per endpoint.</p>
+<h2 id="list-of-endpoints">List of endpoints</h2>
+<h3 id="post-apiauthsignin">POST <code>/api/auth/signin</code></h3>
+<p>Logs the user in. No effect if the user is already logged in.</p>
+<p><strong>Request body</strong></p>
+<pre><code>username_or_email: string,
+password: string
+</code></pre>
+<p><strong>Response</strong></p>
+<p><code>204 No Content</code> - Success.
+<code>401 Unauthorized</code> - Failed login (invalid username, email or password).
+<code>???</code> - User was already logged in.</p>
+<h3 id="delete-apiauthsignout">DELETE <code>/api/auth/signout</code></h3>
+<p>Logs the user out.</p>
+<p><strong>Response</strong>
+<code>204 No Content</code> - Success.
+<code>401 Unauthorized</code> - User was already logged out.</p>
+<h3 id="get-apiitems">GET <code>/api/items</code></h3>
+<p>Gets all item batches in the inventory.</p>
+<p><strong>Response Data</strong></p>
+<pre><code>{
+    items: [{
+        item_index: int,
+        item_type: {
+            item_id: int,
+            name: string,
+            description: string,
+            price: decimal(2),
+            restricted_level: int
+        },
+        location: {
+            location_id: int,
+            name: string,
+            description: string,
+            restricted_level: int
+        },
+        details: string,
+        quantity: decimal(4),
+        restricted_level: int
+    }]
+}
+</code></pre>
+<h3 id="post-apiitems">POST <code>/api/items</code></h3>
+<p>Adds an item batch to the inventory.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Create Items permission.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
+<pre><code>item_id: int,
+location_id: int,
+details: string?,
+quantity: decimal(4),
+restricted_level: int
+</code></pre>
+<p>An item type and location with a matching <code>item_id</code> and <code>location_id</code> respectively must exist in the database.</p>
+<p><strong>Response Data</strong></p>
+<pre><code>{
+    item_index: int
+}
+</code></pre>
+<p><code>item_index</code> is the ID of the newly created item.</p>
+<h3 id="get-apiitemsitem_index">GET <code>/api/items/:item_index</code></h3>
+<p>Gets a specific item batch.</p>
+<p><strong>Response Data</strong></p>
+<pre><code>{
+    item_index: int,
+    item_type: {
+        item_id: int,
+        name: string,
+        description: string,
+        price: decimal(2),
+        restricted_level: int
+    },
+    location: {
+        location_id: int,
+        name: string,
+        description: string,
+        restricted_level: int
+    },
+    details: string?,
+    quantity: decimal(4),
+    restricted_level: int
+}
+</code></pre>
+<h3 id="put-apiitemsitem_index">PUT <code>/api/items/:item_index</code></h3>
+<p>Edits a specific item batch. Cannot change the batch's item type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Items permission.</p>
+<p>Cannot edit an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
+<pre><code>location_id: int,
+details: string?,
+quantity: decimal(4),
+restricted_level: int
+</code></pre>
+<p>A location with a matching <code>location_id</code> must exist in the database.</p>
+<h3 id="delete-apiitemsitem_index">DELETE <code>/api/items/:item_index</code></h3>
+<p>Delete a specific item batch. Cannot change the batch's item type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Delete Items permission.</p>
+<p>Cannot delete an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<h3 id="get-apiitemtypes">GET <code>/api/itemtypes</code></h3>
+<p>Gets all defined item types.</p>
+<p><strong>Response Data</strong></p>
+<pre><code>{
+    item_types: [{
+        item_id: int,
+        name: string,
+        description: string,
+        price: decimal(2),
+        restricted_level: int
+    }]
+}
+</code></pre>
+<h3 id="post-apiitemtypes">POST <code>/api/itemtypes</code></h3>
+<p>Defines an item type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Create Item Types permission.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
+<pre><code>name: string,
+description: string,
+price: decimal(2),
+restricted_level: int
+</code></pre>
+<p><strong>Response Data</strong></p>
+<pre><code>{
+    item_id: int
+}
+</code></pre>
+<p><code>item_id</code> is the ID of the newly defined item type.</p>
+<h3 id="get-apiitemtypesitem_id">GET <code>/api/itemtypes/:item_id</code></h3>
+<p>Gets a specific item type.</p>
+<p><strong>Response Data</strong></p>
+<pre><code>{
+    item_id: int,
+    name: string,
+    description: string,
+    price: decimal(2),
+    restricted_level: int
+}
+</code></pre>
+<h3 id="put-apiitemtypesitem_id">PUT <code>/api/itemtypes/:item_id</code></h3>
+<p>Edits a specific item type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Item Types permission.</p>
+<p>Cannot edit an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
+<pre><code>name: string,
+description: string,
+price: decimal(2),
+restricted_level: int
+</code></pre>
+<h3 id="delete-apiitemtypesitem_id">DELETE <code>/api/itemtypes/:item_id</code></h3>
+<p>Delete a specific item type. <em>What happens if there are still items of the type in the inventory?</em></p>
+<p><strong>Required Permissions</strong></p>
+<p>Delete Item Types permission.</p>
+<p>Cannot delete an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<h3 id="get-apilocations">GET <code>/api/locations</code></h3>
+<p>Gets all locations.</p>
+<p><strong>Response Data</strong></p>
+<pre><code>{
+    locations: [{
+        location_id: int,
+        name: string,
+        description: string,
+        restricted_level: int
+    }]
+}
+</code></pre>
+<h3 id="post-apilocations">POST <code>/api/locations</code></h3>
+<p>Creates a location.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Create Locations permission.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
+<pre><code>name: string,
+description: string,
+restricted_level: int
+</code></pre>
+<p><strong>Response Data</strong></p>
+<pre><code>{
+    location_id: int
+}
+</code></pre>
+<p><code>location_id</code> is the ID of the newly created location.</p>
+<h3 id="get-apilocationslocation_id">GET <code>/api/locations/:location_id</code></h3>
+<p>Gets a specific location.</p>
+<p><strong>Response Data</strong></p>
+<pre><code>{
+    location_id: int,
+    name: string,
+    description: string,
+    restricted_level: int
+}
+</code></pre>
+<h3 id="put-apilocationslocation_id">PUT <code>/api/locations/:location_id</code></h3>
+<p>Edits a specific location.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Locations permission.</p>
+<p>Cannot edit a location with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
+<pre><code>name: string,
+description: string,
+restricted_level: int
+</code></pre>
+<h3 id="delete-apilocationslocation_id">DELETE <code>/api/locations/:location_id</code></h3>
+<p>Delete a specific location. <em>What happens if there are still items in that location?</em></p>
+<p><strong>Required Permissions</strong></p>
+<p>Delete Locations permission.</p>
+<p>Cannot delete an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script src="../js/bootstrap.bundle.min.js"></script>
+        <script>
+            var base_url = "..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../js/base.js"></script>
+        <script src="../search/main.js"></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
