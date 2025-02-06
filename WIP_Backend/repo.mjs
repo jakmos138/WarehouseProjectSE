@@ -1,4 +1,5 @@
 const crypto = await import('node:crypto');
+import { sendSuccess, sendError } from "./resutil.mjs";
 
 import sql from "mssql";
 
@@ -107,7 +108,7 @@ class Repo {
         OUTPUT inserted.user_id, inserted.username
         VALUES(@username, @password, @phone, @email, @permission_level);`) // user_id is enough for serialization?
       .then(res => {
-        cb(null, res);
+        cb(null, res.recordset[0]);
       })
       .catch(err => {
         cb(err);
@@ -272,7 +273,7 @@ class Repo {
     }
     sr.query("INSERT INTO dbo.Items (item_id, location_id, details, quantity, restricted_level) OUTPUT inserted.item_index VALUES(@item_id, @location_id, @details, @quantity, @restricted_level);")
     .then(res => {
-      cb(null, res);
+      cb(null, res.recordset[0]);
     })
     .catch(err => {
       cb(err);
@@ -300,26 +301,7 @@ class Repo {
       .then(res => {
         let rs = res.recordset;
         if (rs.length == 0) return cb(this.NOT_FOUND);
-        let e = rs[0];
-        let ae = {id: e.item_index,
-                  type: {
-                    id: e.item_id,
-                    name: e.t_name,
-                    description: e.t_desc,
-                    price: e.price,
-                    restricted_level: e.t_rl
-                  },
-                  location: {
-                    id: e.location_id,
-                    name: e.l_name,
-                    description: e.l_desc,
-                    restricted_level: e.l_rl
-                  },
-                  details: e.details,
-                  quantity: e.quantity,
-                  restricted_level: e.i_rl
-          };
-        cb(null, ae);
+        cb(null, res);
       })
       .catch(err => {
         cb(err);
@@ -412,9 +394,9 @@ class Repo {
     catch {
       return cb(this.MALFORMED);
     }
-    sr.query("INSERT INTO dbo.ItemTypes (name, description, price, permission_level) OUTPUT inserted.item_id VALUES(@name, @description, @price, @permission_level);")
+    sr.query("INSERT INTO dbo.ItemTypes (name, description, price, restricted_level) OUTPUT inserted.item_id VALUES(@name, @description, @price, @restricted_level);")
     .then(res => {
-      cb(null, res);
+      cb(null, res.recordset[0]);
     })
     .catch(err => {
       cb(err);
@@ -435,7 +417,7 @@ class Repo {
       catch {
         return cb(this.MALFORMED);
       }
-      sr.query(`UPDATE dbo.ItemTypes SET name = @name, description = @description, price = @price, permission_level = @permission_level
+      sr.query(`UPDATE dbo.ItemTypes SET name = @name, description = @description, price = @price, restricted_level = @restricted_level
                 WHERE item_id = @item_id;`)
       .then(res => {
         cb(null, res);
@@ -508,9 +490,9 @@ class Repo {
     catch {
       return cb(this.MALFORMED);
     }
-    sr.query("INSERT INTO dbo.Locations (name, description, permission_level) OUTPUT inserted.location_id VALUES(@name, @description, @permission_level);")
+    sr.query("INSERT INTO dbo.Locations (name, description, restricted_level) OUTPUT inserted.location_id VALUES(@name, @description, @restricted_level);")
     .then(res => {
-      cb(null, res);
+      cb(null, res.recordset[0]);
     })
     .catch(err => {
       cb(err);
@@ -530,7 +512,7 @@ class Repo {
       catch {
         return cb(this.MALFORMED);
       }
-      sr.query(`UPDATE dbo.Locations SET name = @name, description = @description, permission_level = @permission_level
+      sr.query(`UPDATE dbo.Locations SET name = @name, description = @description, restricted_level = @restricted_level
                 WHERE location_id = @location_id;`)
       .then(res => {
         cb(null, res);
@@ -563,24 +545,19 @@ class Repo {
 
   errorHandling = function(err, res, next) {
     if (err == this.UNAUTHORIZED) {
-      res.status(403);
-      res.send("403 Forbidden");
+      sendError(res, 403, "403 Forbidden");
     }
     else if (err == this.MALFORMED) {
-      res.status(400);
-      res.send("400 Bad Request");
+      sendError(res, 400, "400 Bad Request");
     } 
     else if (err == this.NOT_FOUND) {
-      res.status(404);
-      res.send("404 Not Found");
+      sendError(res, 404, "404 Not Found");
     }
     else if (err == this.CONFLICT) {
-      res.status(409);
-      res.send("409 Conflict");
+      sendError(res, 409, "409 Conflict");
     }
     else if (err) {
-      res.status(500);
-      res.send("500 Internal Server Error");
+      sendError(res, 500, "500 Internal Server Error");
     }
     else next();
   }

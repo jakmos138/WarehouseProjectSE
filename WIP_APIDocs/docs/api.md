@@ -110,8 +110,7 @@ username_or_email: string,
 password: string
 ```
 **Response**
-General rules for status codes don't apply.
-`204 No Content` - Success
+`204 No Content` - Success.
 `401 Unauthorized` - Failed login (invalid username, email or password).
 `???` - User was already logged in.
 
