@@ -59,4 +59,12 @@ router.delete("/:itemId", checkPerm(6), (req, res) => {
   });
 });
 
+router.put("/:itemId/props/:propertyId", (req, res) => {
+  sendError(res, 501);
+});
+
+router.delete("/:itemId/props/:propertyId", (req, res) => {
+  sendError(res, 501);
+});
+
 export default router;

@@ -59,4 +59,16 @@ router.delete("/:typeId", checkPerm(3), (req, res) => {
   });
 });
 
+router.post("/:typeId/props", (req, res) => {
+  sendError(res, 501);
+});
+
+router.put("/props/:propId", (req, res) => {
+  sendError(res, 501);
+});
+
+router.delete("/props/:propId", (req, res) => {
+  sendError(res, 501);
+});
+
 export default router;

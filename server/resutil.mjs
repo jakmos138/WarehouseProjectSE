@@ -4,6 +4,7 @@ let errorMessages = {
     403: "403 Forbidden",
     409: "409 Conflict",
     500: "500 Internal Server Error",
+    501: "501 Not Implemented"
 }
 
 const sendSuccess = function(res, code, data = null) {
