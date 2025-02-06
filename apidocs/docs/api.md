@@ -104,24 +104,28 @@ Exceptions from this rule are specified per endpoint.
 
 ### POST `/api/auth/signin`
 Logs the user in. No effect if the user is already logged in.
+
 **Request body**
 ```
 username_or_email: string,
 password: string
 ```
 **Response**
+
 `204 No Content` - Success.
 `401 Unauthorized` - Failed login (invalid username, email or password).
 `???` - User was already logged in.
 
 ### DELETE `/api/auth/signout`
 Logs the user out.
+
 **Response**
 `204 No Content` - Success.
 `401 Unauthorized` - User was already logged out.
 
 ### GET `/api/items`
 Gets all item batches in the inventory.
+
 **Response Data**
 ```
 {
@@ -149,9 +153,13 @@ Gets all item batches in the inventory.
 
 ### POST `/api/items`
 Adds an item batch to the inventory.
+
 **Required Permissions**
+
 Create Items permission.
+
 Cannot set a `restricted_level` for higher access than the user's own `permission_level`.
+
 **Request Body**
 ```
 item_id: int,
@@ -161,6 +169,7 @@ quantity: decimal(4),
 restricted_level: int
 ```
 An item type and location with a matching `item_id` and `location_id` respectively must exist in the database.
+
 **Response Data**
 ```
 {
@@ -171,6 +180,7 @@ An item type and location with a matching `item_id` and `location_id` respective
 
 ### GET `/api/items/:item_index`
 Gets a specific item batch.
+
 **Response Data**
 ```
 {
@@ -196,10 +206,15 @@ Gets a specific item batch.
 
 ### PUT `/api/items/:item_index`
 Edits a specific item batch. Cannot change the batch's item type.
+
 **Required Permissions**
+
 Edit Items permission.
+
 Cannot edit an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
+
 Cannot set a `restricted_level` for higher access than the user's own `permission_level`.
+
 **Request Body**
 ```
 location_id: int,
@@ -211,12 +226,15 @@ A location with a matching `location_id` must exist in the database.
 
 ### DELETE `/api/items/:item_index`
 Delete a specific item batch. Cannot change the batch's item type.
-**Required Permissions**
-Delete Items permission.
-Cannot delete an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
 
+**Required Permissions**
+
+Delete Items permission.
+
+Cannot delete an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
 ### GET `/api/itemtypes`
 Gets all defined item types.
+
 **Response Data**
 ```
 {
@@ -232,9 +250,13 @@ Gets all defined item types.
 
 ### POST `/api/itemtypes`
 Defines an item type.
+
 **Required Permissions**
+
 Create Item Types permission.
+
 Cannot set a `restricted_level` for higher access than the user's own `permission_level`.
+
 **Request Body**
 ```
 name: string,
@@ -252,6 +274,7 @@ restricted_level: int
 
 ### GET `/api/itemtypes/:item_id`
 Gets a specific item type.
+
 **Response Data**
 ```
 {
@@ -265,10 +288,15 @@ Gets a specific item type.
 
 ### PUT `/api/itemtypes/:item_id`
 Edits a specific item type.
+
 **Required Permissions**
+
 Edit Item Types permission.
+
 Cannot edit an item type with a `restricted_level` for higher access than the user's own `permission_level`.
+
 Cannot set a `restricted_level` for higher access than the user's own `permission_level`.
+
 **Request Body**
 ```
 name: string,
@@ -279,12 +307,15 @@ restricted_level: int
 
 ### DELETE `/api/itemtypes/:item_id`
 Delete a specific item type. *What happens if there are still items of the type in the inventory?*
-**Required Permissions**
-Delete Item Types permission.
-Cannot delete an item type with a `restricted_level` for higher access than the user's own `permission_level`.
 
+**Required Permissions**
+
+Delete Item Types permission.
+
+Cannot delete an item type with a `restricted_level` for higher access than the user's own `permission_level`.
 ### GET `/api/locations`
 Gets all locations.
+
 **Response Data**
 ```
 {
@@ -299,9 +330,13 @@ Gets all locations.
 
 ### POST `/api/locations`
 Creates a location.
+
 **Required Permissions**
+
 Create Locations permission.
+
 Cannot set a `restricted_level` for higher access than the user's own `permission_level`.
+
 **Request Body**
 ```
 name: string,
@@ -318,6 +353,7 @@ restricted_level: int
 
 ### GET `/api/locations/:location_id`
 Gets a specific location.
+
 **Response Data**
 ```
 {
@@ -330,10 +366,15 @@ Gets a specific location.
 
 ### PUT `/api/locations/:location_id`
 Edits a specific location.
+
 **Required Permissions**
+
 Edit Locations permission.
+
 Cannot edit a location with a `restricted_level` for higher access than the user's own `permission_level`.
+
 Cannot set a `restricted_level` for higher access than the user's own `permission_level`.
+
 **Request Body**
 ```
 name: string,
@@ -343,6 +384,9 @@ restricted_level: int
 
 ### DELETE `/api/locations/:location_id`
 Delete a specific location. *What happens if there are still items in that location?*
+
 **Required Permissions**
+
 Delete Locations permission.
+
 Cannot delete an item type with a `restricted_level` for higher access than the user's own `permission_level`.

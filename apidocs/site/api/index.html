@@ -190,34 +190,34 @@ Exceptions from this rule are specified per endpoint.</li>
 <h2 id="error-responses">Error responses</h2>
 <p>The following error status codes are common for all (or most) endpoints with given request methods:</p>
 <ul>
-<li><code>400 Bad Request</code> <strong>POST, PUT</strong> - Request is malformed. Typically caused by type mismatch in URL parameters, request body, or missing required fields;</li>
+<li><code>400 Bad Request</code> <strong>POST, PUT, DELETE</strong> - Request is malformed. Typically caused by type mismatch in URL parameters, request body, or missing required fields;</li>
 <li><code>401 Unauthorized</code> - User is not logged in;</li>
 <li><code>403 Forbidden</code> <strong>POST, PUT, DELETE</strong> - User is logged in, but does not have sufficient permissions to perform the operation. Required permissions are specified on each endpoint;</li>
 <li><code>404 Not Found</code> - URL is unrecognized;</li>
 <li><code>404 Not Found</code> <strong>GET, PUT, DELETE</strong> - For endpoints with URL parameters, requested resource does not exist;</li>
-<li><code>409 Conflict</code> <strong>POST, PUT</strong> - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a unique constraint violation or an attempt to point a foreign key field (which typically ends with <code>_id</code>) to a nonexistent resource;</li>
+<li><code>409 Conflict</code> <strong>POST, PUT</strong> - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a UNIQUE or FOREIGN_KEY constraint violation;</li>
 <li><code>500 Internal Server Error</code> - Unexpected error during request processing. <em>Let's hope there won't be many of those.</em></li>
 </ul>
 <p>Exceptions from this rule are specified per endpoint.</p>
 <h2 id="list-of-endpoints">List of endpoints</h2>
 <h3 id="post-apiauthsignin">POST <code>/api/auth/signin</code></h3>
-<p>Logs the user in. No effect if the user is already logged in.
-<strong>Request body</strong></p>
+<p>Logs the user in. No effect if the user is already logged in.</p>
+<p><strong>Request body</strong></p>
 <pre><code>username_or_email: string,
 password: string
 </code></pre>
-<p><strong>Response</strong>
-<code>204 No Content</code> - Success.
+<p><strong>Response</strong></p>
+<p><code>204 No Content</code> - Success.
 <code>401 Unauthorized</code> - Failed login (invalid username, email or password).
 <code>???</code> - User was already logged in.</p>
 <h3 id="delete-apiauthsignout">DELETE <code>/api/auth/signout</code></h3>
-<p>Logs the user out.
-<strong>Response</strong>
+<p>Logs the user out.</p>
+<p><strong>Response</strong>
 <code>204 No Content</code> - Success.
 <code>401 Unauthorized</code> - User was already logged out.</p>
 <h3 id="get-apiitems">GET <code>/api/items</code></h3>
-<p>Gets all item batches in the inventory.
-<strong>Response Data</strong></p>
+<p>Gets all item batches in the inventory.</p>
+<p><strong>Response Data</strong></p>
 <pre><code>{
     items: [{
         item_index: int,
@@ -241,28 +241,27 @@ password: string
 }
 </code></pre>
 <h3 id="post-apiitems">POST <code>/api/items</code></h3>
-<p>Adds an item batch to the inventory.
-<strong>Required Permissions</strong>
-Create Items permission.
-Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.
-<strong>Request Body</strong></p>
+<p>Adds an item batch to the inventory.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Create Items permission.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
 <pre><code>item_id: int,
 location_id: int,
-details: string,
+details: string?,
 quantity: decimal(4),
 restricted_level: int
 </code></pre>
-<p><code>item_id</code> refers the item type.
-<code>location_id</code> refers to the location.
-<strong>Response Data</strong></p>
+<p>An item type and location with a matching <code>item_id</code> and <code>location_id</code> respectively must exist in the database.</p>
+<p><strong>Response Data</strong></p>
 <pre><code>{
     item_index: int
 }
 </code></pre>
 <p><code>item_index</code> is the ID of the newly created item.</p>
 <h3 id="get-apiitemsitem_index">GET <code>/api/items/:item_index</code></h3>
-<p>Gets a specific item batch.
-<strong>Response Data</strong></p>
+<p>Gets a specific item batch.</p>
+<p><strong>Response Data</strong></p>
 <pre><code>{
     item_index: int,
     item_type: {
@@ -278,33 +277,32 @@ restricted_level: int
         description: string,
         restricted_level: int
     },
-    details: string,
+    details: string?,
     quantity: decimal(4),
     restricted_level: int
 }
 </code></pre>
 <h3 id="put-apiitemsitem_index">PUT <code>/api/items/:item_index</code></h3>
-<p>Edits a specific item batch. Cannot change the batch's item type.
-<strong>Required Permissions</strong>
-Edit Items permission.
-Cannot edit an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.
-Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.
-<strong>Request Body</strong></p>
+<p>Edits a specific item batch. Cannot change the batch's item type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Items permission.</p>
+<p>Cannot edit an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
 <pre><code>location_id: int,
-details: string,
+details: string?,
 quantity: decimal(4),
 restricted_level: int
 </code></pre>
-<p><code>item_id</code> refers the item type.
-<code>location_id</code> refers to the location.</p>
+<p>A location with a matching <code>location_id</code> must exist in the database.</p>
 <h3 id="delete-apiitemsitem_index">DELETE <code>/api/items/:item_index</code></h3>
-<p>Delete a specific item batch. Cannot change the batch's item type.
-<strong>Required Permissions</strong>
-Delete Items permission.
-Cannot delete an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p>Delete a specific item batch. Cannot change the batch's item type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Delete Items permission.</p>
+<p>Cannot delete an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
 <h3 id="get-apiitemtypes">GET <code>/api/itemtypes</code></h3>
-<p>Gets all defined item types.
-<strong>Response Data</strong></p>
+<p>Gets all defined item types.</p>
+<p><strong>Response Data</strong></p>
 <pre><code>{
     item_types: [{
         item_id: int,
@@ -316,11 +314,11 @@ Cannot delete an item batch with a <code>restricted_level</code> for higher acce
 }
 </code></pre>
 <h3 id="post-apiitemtypes">POST <code>/api/itemtypes</code></h3>
-<p>Defines an item type.
-<strong>Required Permissions</strong>
-Create Item Types permission.
-Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.
-<strong>Request Body</strong></p>
+<p>Defines an item type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Create Item Types permission.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
 <pre><code>name: string,
 description: string,
 price: decimal(2),
@@ -333,8 +331,8 @@ restricted_level: int
 </code></pre>
 <p><code>item_id</code> is the ID of the newly defined item type.</p>
 <h3 id="get-apiitemtypesitem_id">GET <code>/api/itemtypes/:item_id</code></h3>
-<p>Gets a specific item type.
-<strong>Response Data</strong></p>
+<p>Gets a specific item type.</p>
+<p><strong>Response Data</strong></p>
 <pre><code>{
     item_id: int,
     name: string,
@@ -344,25 +342,25 @@ restricted_level: int
 }
 </code></pre>
 <h3 id="put-apiitemtypesitem_id">PUT <code>/api/itemtypes/:item_id</code></h3>
-<p>Edits a specific item type.
-<strong>Required Permissions</strong>
-Edit Item Types permission.
-Cannot edit an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.
-Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.
-<strong>Request Body</strong></p>
+<p>Edits a specific item type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Item Types permission.</p>
+<p>Cannot edit an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
 <pre><code>name: string,
 description: string,
 price: decimal(2),
 restricted_level: int
 </code></pre>
 <h3 id="delete-apiitemtypesitem_id">DELETE <code>/api/itemtypes/:item_id</code></h3>
-<p>Delete a specific item type. <em>What happens if there are still items of the type in the inventory?</em>
-<strong>Required Permissions</strong>
-Delete Item Types permission.
-Cannot delete an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p>Delete a specific item type. <em>What happens if there are still items of the type in the inventory?</em></p>
+<p><strong>Required Permissions</strong></p>
+<p>Delete Item Types permission.</p>
+<p>Cannot delete an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
 <h3 id="get-apilocations">GET <code>/api/locations</code></h3>
-<p>Gets all locations.
-<strong>Response Data</strong></p>
+<p>Gets all locations.</p>
+<p><strong>Response Data</strong></p>
 <pre><code>{
     locations: [{
         location_id: int,
@@ -373,11 +371,11 @@ Cannot delete an item type with a <code>restricted_level</code> for higher acces
 }
 </code></pre>
 <h3 id="post-apilocations">POST <code>/api/locations</code></h3>
-<p>Creates a location.
-<strong>Required Permissions</strong>
-Create Locations permission.
-Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.
-<strong>Request Body</strong></p>
+<p>Creates a location.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Create Locations permission.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
 <pre><code>name: string,
 description: string,
 restricted_level: int
@@ -389,8 +387,8 @@ restricted_level: int
 </code></pre>
 <p><code>location_id</code> is the ID of the newly created location.</p>
 <h3 id="get-apilocationslocation_id">GET <code>/api/locations/:location_id</code></h3>
-<p>Gets a specific location.
-<strong>Response Data</strong></p>
+<p>Gets a specific location.</p>
+<p><strong>Response Data</strong></p>
 <pre><code>{
     location_id: int,
     name: string,
@@ -399,21 +397,21 @@ restricted_level: int
 }
 </code></pre>
 <h3 id="put-apilocationslocation_id">PUT <code>/api/locations/:location_id</code></h3>
-<p>Edits a specific location.
-<strong>Required Permissions</strong>
-Edit Locations permission.
-Cannot edit a location with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.
-Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.
-<strong>Request Body</strong></p>
+<p>Edits a specific location.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Locations permission.</p>
+<p>Cannot edit a location with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p>Cannot set a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
 <pre><code>name: string,
 description: string,
 restricted_level: int
 </code></pre>
 <h3 id="delete-apilocationslocation_id">DELETE <code>/api/locations/:location_id</code></h3>
-<p>Delete a specific location. <em>What happens if there are still items in that location?</em>
-<strong>Required Permissions</strong>
-Delete Locations permission.
-Cannot delete an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p></div>
+<p>Delete a specific location. <em>What happens if there are still items in that location?</em></p>
+<p><strong>Required Permissions</strong></p>
+<p>Delete Locations permission.</p>
+<p>Cannot delete an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p></div>
             </div>
         </div>
 
