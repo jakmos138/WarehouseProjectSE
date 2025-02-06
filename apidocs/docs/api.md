@@ -77,7 +77,7 @@ If, for example, the specification for a request body is:
 }
 ```
 then the request body is expected to have `key1`, `key2`, and optionally `key3` fields. Not passing an optional field is interpreted the same as passing the field with value `null`.
-Of course, the types must match. When sending data as `application/json`, make sure to pass numbers, and not their string representations, for `int` and `decimal` types.
+Of course, the types must match.
 
 ## Success responses
 The following success status codes are typically returned by endpoints with the given methods:
@@ -171,12 +171,8 @@ restricted_level: int
 An item type and location with a matching `item_id` and `location_id` respectively must exist in the database.
 
 **Response Data**
-```
-{
-    item_index: int
-}
-```
-`item_index` is the ID of the newly created item.
+
+See GET `/api/items/:item_index`, where  `:item_index` is the ID of the newly defined item batch.
 
 ### GET `/api/items/:item_index`
 Gets a specific item batch and all its property values.
@@ -230,6 +226,10 @@ restricted_level: int
 ```
 A location with a matching `location_id` must exist in the database.
 
+**Response Data**
+
+See GET `/api/items/:item_index`, where  `:item_index` is the ID of the edited item batch.
+
 ### DELETE `/api/items/:item_index`
 Delete a specific item batch. Cannot change the batch's item type.
 
@@ -238,6 +238,30 @@ Delete a specific item batch. Cannot change the batch's item type.
 Delete Items permission.
 
 Cannot delete an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
+### PUT `/api/items/:item_index/props/:property_id
+Updates a property value on an item batch.
+
+**Required Permissions**
+
+Edit Items permission.
+
+Cannot edit an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
+
+**Request Body**
+```
+value: string
+```
+`value` must match the constraints of the property's `type`:
+
+- `"boolean"` - `true`, `false`, `"true"` or `"false"`
+- `"int"` - integer or its string representation
+- `"decimal"` - real number or its string representation
+- `"string"` - any string
+- `"datetime"` - one of:
+  - integer representing seconds since Unix epoch (`1970-01-01T00:00:00Z`)
+  - string representation of said integer
+  - string of `YYYY-MM-DDThh:mm:ssZ` format, 24-hour system, time in UTC, must not be before Unix epoch, for example: `2025-02-06T15:13:23Z`
+
 ### GET `/api/itemtypes`
 Gets all defined item types.
 
@@ -271,12 +295,8 @@ price: decimal(2),
 restricted_level: int
 ```
 **Response Data**
-```
-{
-    item_id: int
-}
-```
-`item_id` is the ID of the newly defined item type.
+
+See GET `/api/itemtypes/:item_id`, where  `:item_id` is the ID of the newly defined item type.
 
 ### GET `/api/itemtypes/:item_id`
 Gets a specific item type and all its properties.
@@ -316,6 +336,9 @@ description: string,
 price: decimal(2),
 restricted_level: int
 ```
+**Response Data**
+
+See GET `/api/itemtypes/:item_id`, where  `:item_id` is the ID of the edited item type.
 
 ### DELETE `/api/itemtypes/:item_id`
 Delete a specific item type. *What happens if there are still items of the type in the inventory?*
@@ -356,12 +379,8 @@ description: string,
 restricted_level: int
 ```
 **Response Data**
-```
-{
-    location_id: int
-}
-```
-`location_id` is the ID of the newly created location.
+
+See GET `/api/locations/:location_id`, where  `:location_id` is the ID of the newly defined location.
 
 ### GET `/api/locations/:location_id`
 Gets a specific location.
@@ -393,6 +412,9 @@ name: string,
 description: string,
 restricted_level: int
 ```
+**Response Data**
+
+See GET `/api/locations/:location_id`, where  `:location_id` is the ID of the edited location.
 
 ### DELETE `/api/locations/:location_id`
 Delete a specific location. *What happens if there are still items in that location?*

@@ -292,7 +292,7 @@ class Repo {
     }
     sr.query("INSERT INTO dbo.Items (item_id, location_id, details, quantity, restricted_level) OUTPUT inserted.item_index VALUES(@item_id, @location_id, @details, @quantity, @restricted_level);")
     .then(res => {
-      cb(null, res.recordset[0]);
+      this.getItemById(res.recordset[0].item_index, cb);
     })
     .catch(err => {
       cb(err);
@@ -317,9 +317,7 @@ class Repo {
       sql.query(`UPDATE dbo.Items SET location_id = @location_id, details = @details, quantity = @quantity, restricted_level = @restricted_level
                 WHERE item_index = @item_index;`)
       .then(res => {
-        let rs = res.recordset;
-        if (rs.length == 0) return cb(this.NOT_FOUND);
-        cb(null, res);
+        this.getItemTypeById(id, cb);
       })
       .catch(err => {
         cb(err);
@@ -435,7 +433,7 @@ class Repo {
     }
     sr.query("INSERT INTO dbo.ItemTypes (name, description, price, restricted_level) OUTPUT inserted.item_id VALUES(@name, @description, @price, @restricted_level);")
     .then(res => {
-      cb(null, res.recordset[0]);
+      this.getItemTypeById(res.recordset[0].item_id, cb);
     })
     .catch(err => {
       cb(err);
@@ -459,7 +457,7 @@ class Repo {
       sr.query(`UPDATE dbo.ItemTypes SET name = @name, description = @description, price = @price, restricted_level = @restricted_level
                 WHERE item_id = @item_id;`)
       .then(res => {
-        cb(null, res);
+        this.getItemTypeById(id, cb);
       })
       .catch(err => {
         cb(err);
@@ -531,7 +529,7 @@ class Repo {
     }
     sr.query("INSERT INTO dbo.Locations (name, description, restricted_level) OUTPUT inserted.location_id VALUES(@name, @description, @restricted_level);")
     .then(res => {
-      cb(null, res.recordset[0]);
+      this.getLocationById(res.recordset[0].location_id, cb);
     })
     .catch(err => {
       cb(err);
@@ -554,7 +552,7 @@ class Repo {
       sr.query(`UPDATE dbo.Locations SET name = @name, description = @description, restricted_level = @restricted_level
                 WHERE location_id = @location_id;`)
       .then(res => {
-        cb(null, res);
+        this.getLocationById(id, cb);
       })
       .catch(err => {
         cb(err);
