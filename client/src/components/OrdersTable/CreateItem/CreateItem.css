@@ -1,0 +1,129 @@
+/* Button Styling */
+.create-item-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background 0.3s ease;
+}
+
+.create-item-btn:hover {
+    background-color: #45a049;
+}
+
+.create-item-modal {
+    background: white;
+    padding: 0;
+    border-radius: 10px;
+    width: 500px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+
+}
+
+.create-item-form {
+    margin-left: auto;
+    margin-right: auto;
+    padding: 20px;
+    width: 450px;
+    background: white;
+    border-radius: 8px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    
+}
+
+/* Label Styling */
+.create-item-form label {
+    display: block;
+    
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.create-item-form input {
+    width:400px; /* Ensures all inputs have the same width */
+    max-width: 400px; /* Controls maximum width for consistency */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+    transition: border 0.3s ease;
+    box-sizing: border-box;
+}
+
+
+.create-item-form input:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+
+.create-item-form button {
+    width: 160px;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background 0.3s ease;
+}
+
+.create-item-form button:hover {
+    background-color: #45a049;
+}
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    font-size: 22px;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+    color: #333;
+    transition: background-color color 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.close-btn:hover {
+    background-color: #a6a6a6;
+    color: red;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    margin-bottom: 10px;
+    margin-top: 20px;
+    margin-left: 20px;
+}
+
