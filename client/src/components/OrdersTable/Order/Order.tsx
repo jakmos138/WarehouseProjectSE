@@ -8,6 +8,7 @@ interface OrderProps {
   price: string | number;
   location: string;
   deleteItem: () => void;  // The delete function is passed as a prop
+  updateItem: () => void;
 }
 
 const Order: React.FC<OrderProps> = (props) => {

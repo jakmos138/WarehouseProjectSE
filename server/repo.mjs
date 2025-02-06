@@ -314,10 +314,10 @@ class Repo {
       catch {
         return cb(this.MALFORMED);
       }
-      sql.query(`UPDATE dbo.Items SET location_id = @location_id, details = @details, quantity = @quantity, restricted_level = @restricted_level
+      sr.query(`UPDATE dbo.Items SET location_id = @location_id, details = @details, quantity = @quantity, restricted_level = @restricted_level
                 WHERE item_index = @item_index;`)
       .then(res => {
-        this.getItemTypeById(id, cb);
+        this.getItemById(id, cb);
       })
       .catch(err => {
         cb(err);

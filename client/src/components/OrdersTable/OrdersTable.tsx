@@ -3,6 +3,7 @@ import axios from 'axios';
 import Order from './Order/Order';
 import './OrdersTable.css';
 import CreateItem from './CreateItem/CreateItem';
+import EditItem from './EditItem/EditItem';
 
 
 
@@ -11,6 +12,8 @@ const OrdersTable = () => {
     const [loading, setLoading] = useState(true); // State to manage loading state
     const [error, setError] = useState(null); // State to handle errors
     const [showCreateForm, setShowCreateForm] = useState(false); // State to manage form visibility
+    const [showEditForm, setShowEditForm] = useState(false); // State to manage form visibility
+    const [editFormItem, setEditFormItem] = useState({}) // for edit form
 
     useEffect(() => {
         axios.get('http://localhost:3000/api/items/', {
@@ -19,6 +22,7 @@ const OrdersTable = () => {
         })
         .then((response) => {
             setData(response.data.data);
+            console.log(response.data.data);
             setLoading(false);
         })
         .catch((err) => {
@@ -40,13 +44,26 @@ const OrdersTable = () => {
         });
     };
 
-    const updateItem = (itemId) => {
-        // CODE HERE
+    const showUpdateItem = (item) => {
+        console.log("Edit following item:");
+        console.log(item);
+        setEditFormItem(item);
+        setShowEditForm(!showEditForm);
     }
 
 
     const handleItemCreated = (newItem) => {
         setData([...data, newItem]);  // Add the newly created item to the list
+        setShowCreateForm(false);  // Hide the form after submission
+    };
+
+    const handleItemEdited = (editedItem) => {
+        let e = [...data].map(f => {
+            if (f.id === editedItem.id) return editedItem;
+            else return f;
+        });
+        setData(e);
+        console.log(data);
         setShowCreateForm(false);  // Hide the form after submission
     };
 
@@ -74,6 +91,12 @@ const OrdersTable = () => {
                 </div>
             )}
 
+            {showEditForm && (
+                <div className="modal-overlay">
+                    <EditItem item={editFormItem} onItemEdited={handleItemEdited} onClose={() => setShowEditForm(false)} />
+                </div>
+            )}
+
             <table>
                 <thead>
                     <tr>
@@ -95,7 +118,7 @@ const OrdersTable = () => {
                                 location={item.location.name}
                                 price={item.type.price}
                                 deleteItem={() => deleteItem(item.id)}
-                                updateItem={() => updateItem(item.id)}
+                                updateItem={() => showUpdateItem(item)}
                             />
                         ))
                     ) : (
