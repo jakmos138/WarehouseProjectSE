@@ -12,20 +12,20 @@ The **Orders Table** consists of:
 
 ## **Code Implementation**
 - **CSS File:** `OrdersTable.css`
-  - Defines **table styling**, including border, padding, and color scheme.
-  - Uses **grid layout** for aligning rows and columns.
+  - Defines **table styling**, including border, padding, and color scheme.  
+  - Uses **grid layout** for aligning rows and columns.  
   - Highlights stock availability with different colors (`green` for in stock, `orange` for out of stock).
 
-- **TSX File:** `OrdersTable.tsx`
-  - **Fetches order data** from the backend API (`http://localhost:3000/api/items/`).
-  - Uses **React’s `useEffect` and `useState` hooks** to update the table dynamically.
-  - **Implements the `CreateItem` component**, allowing users to add new items.
+- **TSX File:** `OrdersTable.tsx`  
+  - **Fetches order data** from the backend API (`http://localhost:3000/api/items/`).  
+  - Uses **React’s `useEffect` and `useState` hooks** to update the table dynamically.  
+  - **Implements the `CreateItem` component**, allowing users to add new items.  
   - **Handles item deletion** via `deleteItem(itemId)`, which makes an API request to remove the item.
 
-## **New Feature: Create Item**
+## **New Feature: Create Item**  
 The `CreateItem` component allows users to **add new warehouse items** using a modal form.  
-- Clicking **"Create Item"** opens the modal.
-- Users enter **Item ID, Location, Details, Quantity, and Restricted Level**.
+- Clicking **"Create Item"** opens the modal.  
+- Users enter **Item ID, Location, Details, Quantity, and Restricted Level**.  
 - The item is **sent to the backend** and added to the table dynamically.
 
 ## **Usage**
