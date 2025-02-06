@@ -93,6 +93,10 @@
               <ul class="nav flex-column">
               </ul>
             </li>
+            <li class="nav-item" data-bs-level="2"><a href="#relevant-env-variables" class="nav-link">Relevant .env variables</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
               </ul>
             </li>
         </ul>
@@ -104,10 +108,12 @@
 <p>The following steps apply to connecting to a local instance of SQL Server (SQL Express).</p>
 <h2 id="use-sql-server-authentication">Use SQL Server Authentication</h2>
 <p>The app does not support Windows Authentication for SQL Server, only SQL Server Authentication with a username and password.
-To create a user login in SQL Server, do the following in SQL Server Management Studio:
-- In the Object Explorer, go to your SQL Server instance / <em>Security</em> / <em>Logins</em>, right click it and select <em>New Login...</em>
-- For the new login, select <em>SQL Server Authentication</em>. Disable <em>Enforce password policy</em>.
-- Go to the <em>User Mapping</em> tab, check the <em>WarehouseSE</em> database and the <em>db_owner</em> and <em>public</em> roles for that database.</p>
+To create a user login in SQL Server, do the following in SQL Server Management Studio:</p>
+<ul>
+<li>In the Object Explorer, go to your SQL Server instance / <em>Security</em> / <em>Logins</em>, right click it and select <em>New Login...</em></li>
+<li>For the new login, select <em>SQL Server Authentication</em>. Disable <em>Enforce password policy</em>.</li>
+<li>Go to the <em>User Mapping</em> tab, check the <em>WarehouseSE</em> database and the <em>db_owner</em> and <em>public</em> roles for that database.</li>
+</ul>
 <h2 id="enable-tcpip-and-set-up-ports-in-sql-server">Enable TCP/IP and set up ports in SQL Server</h2>
 <ul>
 <li>Open the SQL Server Manager, located in your Windows system folder <code>Windows/System32/SQLServerManager##.msc</code>, where <code>##</code> corresponds to the SQL Server version.</li>
@@ -121,7 +127,13 @@ To create a user login in SQL Server, do the following in SQL Server Management 
 <li>While in the SQL Server Manager, we can also check if <em>SQL Server Browser</em> is running - it is required for the Node.js module to connect, otherwise the connection will time out on app startup. If not, go to its properties.</li>
 <li>In the <em>Service</em> tab, set <em>Start Mode</em> to <em>Automatic</em>.</li>
 <li>In the <em>Log On</em> tab, start the service.</li>
-</ul></div>
+</ul>
+<h2 id="relevant-env-variables">Relevant .env variables</h2>
+<p><code>DB_SERVER</code> - full name of the SQL server instance, for example <code>PC_NAME\INSTANCE_NAME</code>
+<code>DB_PORT</code> - port on which SQL Server is running, 1433 by default
+<code>DB_NAME</code> - name of the database schema - <code>WarehouseSE</code>
+<code>DB_USER</code> - login name for SQL Server Authentication
+<code>DB_PWD</code> - password for SQL Server Authentication</p></div>
             </div>
         </div>
 

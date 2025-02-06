@@ -164,11 +164,13 @@ All URL parameters are <code>int</code>s that correspond to resource IDs.</p>
 <p>The full specification of <code>data</code> varies between requests.
 <code>data</code> is not <code>null</code> if and only if a success status code other than <code>204 No Content</code> is returned.
 <code>error</code> is not <code>null</code> if and only if a <code>4xx</code> or <code>5xx</code> status code is returned.</p>
-<p>The request body follows more complex rules:
- - data can be sent as <code>application/x-www-form-urlencoded</code>, <code>application/json</code> or <code>multipart/form-data</code>. For endpoints that accept files, only <code>multipart/form-data</code> is accepted;
- - the request body specification never contains nested objects;
- - fields not in the specification are ignored.
-If, for example, the specification for a request body is:</p>
+<p>The request body follows more complex rules:</p>
+<ul>
+<li>data can be sent as <code>application/x-www-form-urlencoded</code>, <code>application/json</code> or <code>multipart/form-data</code>. For endpoints that accept files, only <code>multipart/form-data</code> is accepted;</li>
+<li>the request body specification never contains nested objects;</li>
+<li>fields not in the specification are ignored.</li>
+</ul>
+<p>If, for example, the specification for a request body is:</p>
 <pre><code>{
     key1: int,
     key2: string,
@@ -178,21 +180,25 @@ If, for example, the specification for a request body is:</p>
 <p>then the request body is expected to have <code>key1</code>, <code>key2</code>, and optionally <code>key3</code> fields. Not passing an optional field is interpreted the same as passing the field with value <code>null</code>.
 Of course, the types must match. When sending data as <code>application/json</code>, make sure to pass numbers, and not their string representations, for <code>int</code> and <code>decimal</code> types.</p>
 <h2 id="success-responses">Success responses</h2>
-<p>The following success status codes are typically returned by endpoints with the given methods:
- - <code>200 OK</code> <strong>GET</strong>;
- - <code>201 Created</code> <strong>POST</strong> - the response typically contains the ID of the created resource;
- - <code>204 No Content</code> <strong>PUT, DELETE</strong>
-Exceptions from this rule are specified per endpoint.</p>
+<p>The following success status codes are typically returned by endpoints with the given methods:</p>
+<ul>
+<li><code>200 OK</code> <strong>GET</strong>;</li>
+<li><code>201 Created</code> <strong>POST</strong> - the response typically contains the ID of the created resource;</li>
+<li><code>204 No Content</code> <strong>PUT, DELETE</strong>
+Exceptions from this rule are specified per endpoint.</li>
+</ul>
 <h2 id="error-responses">Error responses</h2>
-<p>The following error status codes are common for all (or most) endpoints with given request methods:
- - <code>400 Bad Request</code> <strong>POST, PUT</strong> - Request is malformed. Typically caused by type mismatch in URL parameters, request body, or missing required fields;
- - <code>401 Unauthorized</code> - User is not logged in;
- - <code>403 Forbidden</code> <strong>POST, PUT, DELETE</strong> - User is logged in, but does not have sufficient permissions to perform the operation. Required permissions are specified on each endpoint;
- - <code>404 Not Found</code> - URL is unrecognized;
- - <code>404 Not Found</code> <strong>GET, PUT, DELETE</strong> - For endpoints with URL parameters, requested resource does not exist;
- - <code>409 Conflict</code> <strong>POST, PUT</strong> - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a unique constraint violation or an attempt to point a foreign key field (which typically ends with <code>_id</code>) to a nonexistent resource;
- - <code>500 Internal Server Error</code> - Unexpected error during request processing. <em>Let's hope there won't be many of those.</em>
-Exceptions from this rule are specified per endpoint.</p>
+<p>The following error status codes are common for all (or most) endpoints with given request methods:</p>
+<ul>
+<li><code>400 Bad Request</code> <strong>POST, PUT</strong> - Request is malformed. Typically caused by type mismatch in URL parameters, request body, or missing required fields;</li>
+<li><code>401 Unauthorized</code> - User is not logged in;</li>
+<li><code>403 Forbidden</code> <strong>POST, PUT, DELETE</strong> - User is logged in, but does not have sufficient permissions to perform the operation. Required permissions are specified on each endpoint;</li>
+<li><code>404 Not Found</code> - URL is unrecognized;</li>
+<li><code>404 Not Found</code> <strong>GET, PUT, DELETE</strong> - For endpoints with URL parameters, requested resource does not exist;</li>
+<li><code>409 Conflict</code> <strong>POST, PUT</strong> - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a unique constraint violation or an attempt to point a foreign key field (which typically ends with <code>_id</code>) to a nonexistent resource;</li>
+<li><code>500 Internal Server Error</code> - Unexpected error during request processing. <em>Let's hope there won't be many of those.</em></li>
+</ul>
+<p>Exceptions from this rule are specified per endpoint.</p>
 <h2 id="list-of-endpoints">List of endpoints</h2>
 <h3 id="post-apiauthsignin">POST <code>/api/auth/signin</code></h3>
 <p>Logs the user in. No effect if the user is already logged in.
@@ -201,8 +207,7 @@ Exceptions from this rule are specified per endpoint.</p>
 password: string
 </code></pre>
 <p><strong>Response</strong>
-General rules for status codes don't apply.
-<code>204 No Content</code> - Success
+<code>204 No Content</code> - Success.
 <code>401 Unauthorized</code> - Failed login (invalid username, email or password).
 <code>???</code> - User was already logged in.</p>
 <h3 id="delete-apiauthsignout">DELETE <code>/api/auth/signout</code></h3>
