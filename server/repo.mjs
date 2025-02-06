@@ -225,10 +225,20 @@ class Repo {
     catch {
       return cb(this.MALFORMED);
     }
-    sr.query(`SELECT I.item_index, T.item_id, T.name as t_name, T.description as t_desc, T.price, T.restricted_level as t_rl, L.location_id, L.name as l_name, L.description as l_desc, L.restricted_level as l_rl, I.details, I.quantity, I.restricted_level as i_rl FROM dbo.Items AS I
-                LEFT JOIN dbo.ItemTypes AS T ON I.item_id = T.item_id
-                LEFT JOIN dbo.Locations AS L ON I.location_id = L.location_id
-                WHERE item_index = @id`)
+    sr.query(`WITH ICTE AS (
+	              SELECT * FROM dbo.Items WHERE item_index = @id
+              )
+              SELECT
+                ICTE.item_index, ICTE.details, ICTE.quantity, ICTE.restricted_level AS i_rl, 
+                IT.item_id, IT.name AS t_name, IT.description AS t_desc, IT.price, IT.restricted_level AS t_rl,
+                L.location_id, L.name AS l_name, L.description AS l_desc,
+                ITP.property_id, ITP.name AS p_name, ITP.description AS p_desc, ITP.type AS p_type,
+                IP.value AS p_value
+                FROM ICTE
+                INNER JOIN dbo.ItemTypes AS IT ON ICTE.item_id = IT.item_id
+                INNER JOIN dbo.Locations AS L ON ICTE.location_id = L.location_id
+                LEFT JOIN dbo.ItemTypeProperties AS ITP ON ICTE.item_id = ITP.item_id
+                LEFT JOIN dbo.ItemProperties AS IP ON ITP.property_id = IP.property_id AND ICTE.item_index = IP.item_index;`)
     .then(res => {
       let rs = res.recordset;
       if (rs.length == 0) return cb(this.NOT_FOUND);
@@ -249,8 +259,17 @@ class Repo {
                 },
                 details: e.details,
                 quantity: e.quantity,
+                properties: [],
                 restricted_level: e.i_rl
         };
+        rs.forEach(f => {
+          if (f.property_id !== null) ae.properties.push({
+            property_id: f.property_id,
+            name: f.p_name,
+            type: f.p_type,
+            value: f.p_value
+          });
+        });
       cb(null, ae);
     })
     .catch(err => {
@@ -273,7 +292,7 @@ class Repo {
     }
     sr.query("INSERT INTO dbo.Items (item_id, location_id, details, quantity, restricted_level) OUTPUT inserted.item_index VALUES(@item_id, @location_id, @details, @quantity, @restricted_level);")
     .then(res => {
-      cb(null, res.recordset[0]);
+      this.getItemById(res.recordset[0].item_index, cb);
     })
     .catch(err => {
       cb(err);
@@ -289,7 +308,7 @@ class Repo {
         sr = this.pool.request().input('item_index', sql.Int, id)
         .input('location_id', sql.Int, item.location_id)
         .input('details', sql.VarChar, item.details)
-        .input('quantity', sql.Decimal, item.quantity)
+        .input('quantity', sql.Decimal(10, 4), item.quantity)
         .input('restricted_level', sql.Int, item.restricted_level);
       }
       catch {
@@ -298,9 +317,7 @@ class Repo {
       sql.query(`UPDATE dbo.Items SET location_id = @location_id, details = @details, quantity = @quantity, restricted_level = @restricted_level
                 WHERE item_index = @item_index;`)
       .then(res => {
-        let rs = res.recordset;
-        if (rs.length == 0) return cb(this.NOT_FOUND);
-        cb(null, res);
+        this.getItemTypeById(id, cb);
       })
       .catch(err => {
         cb(err);
@@ -369,12 +386,33 @@ class Repo {
     catch {
       return cb(this.MALFORMED);
     }
-    sr.query(`SELECT item_id, name, description, price, restricted_level FROM dbo.ItemTypes
-                WHERE item_id = @id`)
+    sr.query(`WITH TCTE AS (
+                SELECT item_id, name, description, price, restricted_level AS t_rl
+                FROM dbo.ItemTypes
+                WHERE item_id = 1
+              )
+              SELECT TCTE.*, ITP.property_id, ITP.name AS p_name, ITP.description AS p_desc, ITP.type AS p_type FROM TCTE
+                LEFT JOIN dbo.ItemTypeProperties AS ITP ON ITP.item_id = TCTE.item_id;`)
     .then(res => {
       let rs = res.recordset;
       if (rs.length == 0) return cb(this.NOT_FOUND);
-      cb(null, rs[0]);
+      let e = rs[0];
+      let ae = {id: e.item_id,
+        name: e.name,
+        description: e.description,
+        price: e.price,
+        properties: [],
+        restricted_level: e.t_rl
+      };
+      rs.forEach(f => {
+        if (f.property_id !== null) ae.properties.push({
+          property_id: f.property_id,
+          name: f.p_name,
+          description: f.p_desc,
+          type: f.p_type
+        });
+      });
+      cb(null, ae);
     })
     .catch(err => {
       cb(err);
@@ -387,7 +425,7 @@ class Repo {
     try {
       sr = this.pool.request().input('name', sql.VarChar, itype.name)
       .input('description', sql.VarChar, itype.description)
-      .input('price', sql.Decimal, itype.price)
+      .input('price', sql.Decimal(10, 2), itype.price)
       .input('restricted_level', sql.Int, itype.restricted_level);
     }
     catch {
@@ -395,7 +433,7 @@ class Repo {
     }
     sr.query("INSERT INTO dbo.ItemTypes (name, description, price, restricted_level) OUTPUT inserted.item_id VALUES(@name, @description, @price, @restricted_level);")
     .then(res => {
-      cb(null, res.recordset[0]);
+      this.getItemTypeById(res.recordset[0].item_id, cb);
     })
     .catch(err => {
       cb(err);
@@ -410,7 +448,7 @@ class Repo {
         sr = this.pool.request().input('item_id', sql.Int, id)
         .input('name', sql.VarChar, itype.name)
         .input('description', sql.VarChar, itype.description)
-        .input('price', sql.Decimal, itype.price)
+        .input('price', sql.Decimal(10, 2), itype.price)
         .input('restricted_level', sql.Int, itype.restricted_level);
       }
       catch {
@@ -419,7 +457,7 @@ class Repo {
       sr.query(`UPDATE dbo.ItemTypes SET name = @name, description = @description, price = @price, restricted_level = @restricted_level
                 WHERE item_id = @item_id;`)
       .then(res => {
-        cb(null, res);
+        this.getItemTypeById(id, cb);
       })
       .catch(err => {
         cb(err);
@@ -491,7 +529,7 @@ class Repo {
     }
     sr.query("INSERT INTO dbo.Locations (name, description, restricted_level) OUTPUT inserted.location_id VALUES(@name, @description, @restricted_level);")
     .then(res => {
-      cb(null, res.recordset[0]);
+      this.getLocationById(res.recordset[0].location_id, cb);
     })
     .catch(err => {
       cb(err);
@@ -514,7 +552,7 @@ class Repo {
       sr.query(`UPDATE dbo.Locations SET name = @name, description = @description, restricted_level = @restricted_level
                 WHERE location_id = @location_id;`)
       .then(res => {
-        cb(null, res);
+        this.getLocationById(id, cb);
       })
       .catch(err => {
         cb(err);

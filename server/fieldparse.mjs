@@ -7,4 +7,8 @@ const secondaryParseFields = function(data, ...names) {
     return out;
 }
 
+const validateProperty = function(value, type) {
+
+}
+
 export { secondaryParseFields };
