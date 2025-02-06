@@ -18,8 +18,8 @@ To create a user login in SQL Server, do the following in SQL Server Management 
 - In the *Service* tab, set *Start Mode* to *Automatic*.
 - In the *Log On* tab, start the service.
 ## Relevant .env variables
-`DB_SERVER` - full name of the SQL server instance, for example `PC_NAME\INSTANCE_NAME`
-`DB_PORT` - port on which SQL Server is running, 1433 by default
-`DB_NAME` - name of the database schema - `WarehouseSE`
-`DB_USER` - login name for SQL Server Authentication
-`DB_PWD` - password for SQL Server Authentication
+- `DB_SERVER` - full name of the SQL server instance, for example `PC_NAME\INSTANCE_NAME`
+- `DB_PORT` - port on which SQL Server is running, 1433 by default
+- `DB_NAME` - name of the database schema - `WarehouseSE`
+- `DB_USER` - login name for SQL Server Authentication
+- `DB_PWD` - password for SQL Server Authentication

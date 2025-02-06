@@ -90,12 +90,12 @@ Exceptions from this rule are specified per endpoint.
 ## Error responses
 The following error status codes are common for all (or most) endpoints with given request methods:
 
-- `400 Bad Request` **POST, PUT** - Request is malformed. Typically caused by type mismatch in URL parameters, request body, or missing required fields;
+- `400 Bad Request` **POST, PUT, DELETE** - Request is malformed. Typically caused by type mismatch in URL parameters, request body, or missing required fields;
 - `401 Unauthorized` - User is not logged in;
 - `403 Forbidden` **POST, PUT, DELETE** - User is logged in, but does not have sufficient permissions to perform the operation. Required permissions are specified on each endpoint;
 - `404 Not Found` - URL is unrecognized;
 - `404 Not Found` **GET, PUT, DELETE** - For endpoints with URL parameters, requested resource does not exist;
-- `409 Conflict` **POST, PUT** - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a unique constraint violation or an attempt to point a foreign key field (which typically ends with `_id`) to a nonexistent resource;
+- `409 Conflict` **POST, PUT** - Adding or updating a resource would cause an invalid state of that resource. Typically caused by a UNIQUE or FOREIGN_KEY constraint violation;
 - `500 Internal Server Error` - Unexpected error during request processing. *Let's hope there won't be many of those.*
 
 Exceptions from this rule are specified per endpoint.
@@ -156,12 +156,11 @@ Cannot set a `restricted_level` for higher access than the user's own `permissio
 ```
 item_id: int,
 location_id: int,
-details: string,
+details: string?,
 quantity: decimal(4),
 restricted_level: int
 ```
-`item_id` refers the item type.
-`location_id` refers to the location.
+An item type and location with a matching `item_id` and `location_id` respectively must exist in the database.
 **Response Data**
 ```
 {
@@ -189,7 +188,7 @@ Gets a specific item batch.
         description: string,
         restricted_level: int
     },
-    details: string,
+    details: string?,
     quantity: decimal(4),
     restricted_level: int
 }
@@ -204,12 +203,11 @@ Cannot set a `restricted_level` for higher access than the user's own `permissio
 **Request Body**
 ```
 location_id: int,
-details: string,
+details: string?,
 quantity: decimal(4),
 restricted_level: int
 ```
-`item_id` refers the item type.
-`location_id` refers to the location.
+A location with a matching `location_id` must exist in the database.
 
 ### DELETE `/api/items/:item_index`
 Delete a specific item batch. Cannot change the batch's item type.

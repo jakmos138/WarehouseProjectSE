@@ -1,5 +1,6 @@
 import express from 'express';
 import formidable, {errors as formidableErrors} from 'formidable';
+import { secondaryParseFields } from "../fieldparse.mjs"
 import { repo } from '../repo.mjs';
 import { checkLogin, checkPerm } from '../perm.mjs';
 import { sendSuccess, sendError } from '../resutil.mjs';
@@ -24,15 +25,10 @@ router.post("/", checkPerm(1), (req, res) => {
   const form = formidable({});
   form.parse(req, (err, fields, files) => {
     if (err) {
-      sendError(res, 500, "500 Internal Server Error");
+      sendError(res, 500);
       return;
     }
-    let formData = {
-      name: fields.name[0],
-      description: fields.description[0],
-      price: fields.price[0],
-      restricted_level: fields.restricted_level[0],
-    };    
+    let formData = secondaryParseFields(fields, "name", "description", "price", "restricted_level");  
     repo.addItemType(req, formData, (err, data) => {
       repo.errorHandling(err, res, () => {
         sendSuccess(res, 201, data);
@@ -44,15 +40,10 @@ router.put("/:typeId", checkPerm(2), (req, res) => {
   const form = formidable({});
   form.parse(req, (err, fields, files) => {
     if (err) {
-      sendError(res, 500, "500 Internal Server Error");
+      sendError(res, 500);
       return;
     }
-    let formData = {
-      name: fields.name[0],
-      description: fields.description[0],
-      price: fields.price[0],
-      restricted_level: fields.restricted_level[0],
-    };
+    let formData = secondaryParseFields(fields, "name", "description", "price", "restricted_level");
     repo.updateItemType(req, req.params.typeId, formData, (err, data) => {
       repo.errorHandling(err, res, () => {
         sendSuccess(res, 204, data);

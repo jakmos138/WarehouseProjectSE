@@ -1,3 +1,11 @@
+let errorMessages = {
+    400: "400 Bad Request",
+    401: "401 Unauthorized",
+    403: "403 Forbidden",
+    409: "409 Conflict",
+    500: "500 Internal Server Error",
+}
+
 const sendSuccess = function(res, code, data = null) {
     res.status(code).json({
         error: null,
@@ -6,6 +14,7 @@ const sendSuccess = function(res, code, data = null) {
 }
 
 const sendError = function(res, code, err = null) {
+    if (err == null && errorMessages[code] !== undefined) err = errorMessages[code];
     res.status(code).json({
         error: err,
         data: null}

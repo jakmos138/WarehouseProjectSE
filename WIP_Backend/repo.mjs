@@ -265,7 +265,7 @@ class Repo {
       sr = this.pool.request().input('item_id', sql.VarChar, item.item_id)
       .input('location_id', sql.VarChar, item.location_id)
       .input('details', sql.VarChar, item.details)
-      .input('quantity', sql.Decimal, item.quantity)
+      .input('quantity', sql.Decimal(10, 4), item.quantity)
       .input('restricted_level', sql.Int, item.restricted_level);
     }
     catch {
@@ -287,7 +287,6 @@ class Repo {
       let sr;
       try {
         sr = this.pool.request().input('item_index', sql.Int, id)
-        .input('item_id', sql.Int, item.item_id)
         .input('location_id', sql.Int, item.location_id)
         .input('details', sql.VarChar, item.details)
         .input('quantity', sql.Decimal, item.quantity)
@@ -296,7 +295,7 @@ class Repo {
       catch {
         return cb(this.MALFORMED);
       }
-      sql.query(`UPDATE dbo.Items SET item_id = @item_id, location_id = @location_id, details = @details, quantity = @quantity, restricted_level = @restricted_level
+      sql.query(`UPDATE dbo.Items SET location_id = @location_id, details = @details, quantity = @quantity, restricted_level = @restricted_level
                 WHERE item_index = @item_index;`)
       .then(res => {
         let rs = res.recordset;
@@ -544,20 +543,26 @@ class Repo {
   }
 
   errorHandling = function(err, res, next) {
-    if (err == this.UNAUTHORIZED) {
-      sendError(res, 403, "403 Forbidden");
-    }
-    else if (err == this.MALFORMED) {
-      sendError(res, 400, "400 Bad Request");
-    } 
-    else if (err == this.NOT_FOUND) {
-      sendError(res, 404, "404 Not Found");
-    }
-    else if (err == this.CONFLICT) {
-      sendError(res, 409, "409 Conflict");
-    }
-    else if (err) {
-      sendError(res, 500, "500 Internal Server Error");
+    if (err) {
+      if (err == this.UNAUTHORIZED) {
+        sendError(res, 403);
+      }
+      else if (err == this.MALFORMED) {
+        sendError(res, 400);
+      } 
+      else if (err == this.NOT_FOUND) {
+        sendError(res, 404);
+      }
+      else if (err == this.CONFLICT) {
+        sendError(res, 409);
+      }
+      else if (err instanceof sql.RequestError) {
+        if (err.number === 547) sendError(res, 409); // conflict with constraint
+        else sendError(res, 500);
+      }
+      else {
+        sendError(res, 500);
+      }
     }
     else next();
   }

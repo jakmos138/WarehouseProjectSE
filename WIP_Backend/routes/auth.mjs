@@ -5,6 +5,7 @@ const LocalStrategy = passport_local.Strategy;
 import crypto from 'node:crypto';
 import bodyParser from 'body-parser';
 import formidable, {errors as formidableErrors} from 'formidable';
+import { secondaryParseFields } from "../fieldparse.mjs"
 import { repo } from '../repo.mjs';
 import { sendSuccess, sendError } from '../resutil.mjs';
 
@@ -49,11 +50,7 @@ let router = express.Router();
 let signup = function(req, res, next) {
   const form = formidable({});
   form.parse(req, (err, fields, files) => {
-    let formData = {
-      username: fields.username[0],
-      email: fields.email[0],
-      password: fields.password[0],
-    };
+    let formData = secondaryParseFields(fields, "username", "email", "password");
     console.log("Signup request received:", formData.username);
     crypto.pbkdf2(formData.password, 'alts', 2**18, 64, 'sha256', function(err, hashed) {
       if (err) { return next(err); }
@@ -82,14 +79,14 @@ router.post("/signup", signup);
 router.post("/signin", bodyParser.urlencoded(), (req, res, next) => {
   passport.authenticate('local', (err, user) => {
     if (err) {
-      sendError(res, 500, "500 Internal Server Error");
+      sendError(res, 500);
     }
     else if (!user) {
-      sendError(res, 401, "401 Unauthorized");
+      sendError(res, 401);
     }
     else {
       req.login(user, function(err) {
-        if (err) sendError(res, 500, "500 Internal Server Error");
+        if (err) sendError(res, 500);
         else sendSuccess(res, 204);
       })      
     }
@@ -97,18 +94,18 @@ router.post("/signin", bodyParser.urlencoded(), (req, res, next) => {
 });
 
 router.get("/profile", (req, res) => {
-  if (!req.isAuthenticated()) return sendError(res, 401, "401 Unauthorized");
+  if (!req.isAuthenticated()) return sendError(res, 401);
   let profile = {};
   res.json(profile);
 });
 
 router.delete('/signout', (req, res, next) => {
   if (req.user === undefined) {
-    sendError(res, 401, "401 Unauthorized");
+    sendError(res, 401);
   }
   else req.logout(function(err) {
     if (err) { 
-      sendError(res, 500, "500 Internal Server Error");
+      sendError(res, 500);
     }
     else {
       sendSuccess(res, 204);
