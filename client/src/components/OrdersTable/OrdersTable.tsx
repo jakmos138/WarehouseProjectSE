@@ -8,7 +8,7 @@ const OrdersTable = () => {
     const [data, setData] = useState(null)
 
     useEffect(() => {
-        axios.get('http://localhost:3000/api/products/')
+        axios.get('http://localhost:3000/items/')
         .then((response) => {
             setData(response.data)
         })
