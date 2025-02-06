@@ -25,3 +25,6 @@ nav:
           - Account Page: pages/account-page.md
           - Dashboard: pages/dashboard.md
           - Orders: pages/orders.md
+  - Backend:
+      - API: api.md
+      - DB Help: db_jak.md
