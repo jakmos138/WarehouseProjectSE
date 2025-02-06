@@ -1,0 +1,27 @@
+site_name: Warehouse Management Documentation
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Project Overview: project-overview.md
+  - Requirements:
+      - Functional Requirements: functional-requirements.md
+      - Non-Functional Requirements: non-functional-requirements.md
+  - Architecture: architecture.md
+  - Business Logic: business-logic.md
+  - Database Model: database.md
+  - UI Design: ui-design.md
+  - Use Case Diagram: use-case.md
+  - Frontend:
+      - Overview: frontend-overview.md
+      - Components:
+          - Account: components/account.md
+          - Header: components/header.md
+          - Orders Table: components/orders-table.md
+          - Sidebar: components/sidebar.md
+          - Sign In: components/signin.md
+      - Pages:
+          - Account Page: pages/account-page.md
+          - Dashboard: pages/dashboard.md
+          - Orders: pages/orders.md
