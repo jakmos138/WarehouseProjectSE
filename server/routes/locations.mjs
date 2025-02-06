@@ -46,7 +46,7 @@ router.put("/:locId", checkPerm(8), (req, res) => {
     let formData = secondaryParseFields(fields, "name", "description", "restricted_level");  
     repo.updateLocation(req, req.params.locId, formData, (err, data) => {
       repo.errorHandling(err, res, () => {
-        sendSuccess(res, 204, data);
+        sendSuccess(res, 200, data);
       })
     });
   })

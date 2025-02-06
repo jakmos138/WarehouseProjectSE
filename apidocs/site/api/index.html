@@ -178,13 +178,13 @@ All URL parameters are <code>int</code>s that correspond to resource IDs.</p>
 }
 </code></pre>
 <p>then the request body is expected to have <code>key1</code>, <code>key2</code>, and optionally <code>key3</code> fields. Not passing an optional field is interpreted the same as passing the field with value <code>null</code>.
-Of course, the types must match. When sending data as <code>application/json</code>, make sure to pass numbers, and not their string representations, for <code>int</code> and <code>decimal</code> types.</p>
+Of course, the types must match.</p>
 <h2 id="success-responses">Success responses</h2>
 <p>The following success status codes are typically returned by endpoints with the given methods:</p>
 <ul>
 <li><code>200 OK</code> <strong>GET</strong>;</li>
-<li><code>201 Created</code> <strong>POST</strong> - the response typically contains the ID of the created resource;</li>
-<li><code>204 No Content</code> <strong>PUT, DELETE</strong>
+<li><code>201 Created</code> <strong>POST, PUT</strong> - the response typically contains the ID of the created resource;</li>
+<li><code>204 No Content</code> <strong>DELETE</strong>
 Exceptions from this rule are specified per endpoint.</li>
 </ul>
 <h2 id="error-responses">Error responses</h2>
@@ -254,13 +254,9 @@ restricted_level: int
 </code></pre>
 <p>An item type and location with a matching <code>item_id</code> and <code>location_id</code> respectively must exist in the database.</p>
 <p><strong>Response Data</strong></p>
-<pre><code>{
-    item_index: int
-}
-</code></pre>
-<p><code>item_index</code> is the ID of the newly created item.</p>
+<p>See GET <code>/api/items/:item_index</code>, where  <code>:item_index</code> is the ID of the newly defined item batch.</p>
 <h3 id="get-apiitemsitem_index">GET <code>/api/items/:item_index</code></h3>
-<p>Gets a specific item batch.</p>
+<p>Gets a specific item batch and all its property values.</p>
 <p><strong>Response Data</strong></p>
 <pre><code>{
     item_index: int,
@@ -279,9 +275,20 @@ restricted_level: int
     },
     details: string?,
     quantity: decimal(4),
+    properties: [{
+        property_id: int,
+        name: string,
+        type: string,
+        value: string?
+    }]
     restricted_level: int
 }
 </code></pre>
+<p>The possible property <code>value</code>s depend on the property's <code>type</code>:
+- <code>"boolean"</code> - <code>"true"</code> or <code>"false"</code>
+- <code>"int"</code> or <code>"decimal"</code> - string representation of number
+- <code>"string"</code> - any string
+- <code>"datetime"</code> - string representation of number of seconds since Unix epoch (January 1st, 1970, 00:00 UTC)</p>
 <h3 id="put-apiitemsitem_index">PUT <code>/api/items/:item_index</code></h3>
 <p>Edits a specific item batch. Cannot change the batch's item type.</p>
 <p><strong>Required Permissions</strong></p>
@@ -295,11 +302,42 @@ quantity: decimal(4),
 restricted_level: int
 </code></pre>
 <p>A location with a matching <code>location_id</code> must exist in the database.</p>
+<p><strong>Response Data</strong></p>
+<p>See GET <code>/api/items/:item_index</code>, where  <code>:item_index</code> is the ID of the edited item batch.</p>
 <h3 id="delete-apiitemsitem_index">DELETE <code>/api/items/:item_index</code></h3>
 <p>Delete a specific item batch. Cannot change the batch's item type.</p>
 <p><strong>Required Permissions</strong></p>
 <p>Delete Items permission.</p>
 <p>Cannot delete an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<h3 id="put-apiitemsitem_indexpropsproperty_id-wip">PUT <code>/api/items/:item_index/props/:property_id</code> (WIP)</h3>
+<p>Creates/updates a property value on an item batch. The property must be assigned to the same item type as the item batch, otherwise <code>404 Not Found</code> will be returned.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Items permission.</p>
+<p>Cannot create/update on an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
+<pre><code>value: string
+</code></pre>
+<p><code>value</code> must match the constraints of the property's <code>type</code>:</p>
+<ul>
+<li><code>"boolean"</code> - <code>true</code>, <code>false</code>, <code>"true"</code> or <code>"false"</code></li>
+<li><code>"int"</code> - integer or its string representation</li>
+<li><code>"decimal"</code> - real number or its string representation</li>
+<li><code>"string"</code> - any string</li>
+<li><code>"datetime"</code> - one of:</li>
+<li>integer representing seconds since Unix epoch (<code>1970-01-01T00:00:00Z</code>)</li>
+<li>string representation of said integer</li>
+<li>string of <code>YYYY-MM-DDThh:mm:ssZ</code> format, 24-hour system, time in UTC, must not be before Unix epoch, for example: <code>2025-02-06T15:13:23Z</code></li>
+</ul>
+<p><strong>Response</strong></p>
+<pre><code>{
+    value: string
+}
+</code></pre>
+<h3 id="delete-apiitemsitem_indexpropsproperty_id-wip">DELETE <code>/api/items/:item_index/props/:property_id</code> (WIP)</h3>
+<p>Deletes a property value from an item batch. The property must be assigned to the same item type as the item batch, otherwise <code>404 Not Found</code> will be returned.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Items permission.</p>
+<p>Cannot delete from an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
 <h3 id="get-apiitemtypes">GET <code>/api/itemtypes</code></h3>
 <p>Gets all defined item types.</p>
 <p><strong>Response Data</strong></p>
@@ -325,19 +363,21 @@ price: decimal(2),
 restricted_level: int
 </code></pre>
 <p><strong>Response Data</strong></p>
-<pre><code>{
-    item_id: int
-}
-</code></pre>
-<p><code>item_id</code> is the ID of the newly defined item type.</p>
+<p>See GET <code>/api/itemtypes/:item_id</code>, where  <code>:item_id</code> is the ID of the newly defined item type.</p>
 <h3 id="get-apiitemtypesitem_id">GET <code>/api/itemtypes/:item_id</code></h3>
-<p>Gets a specific item type.</p>
+<p>Gets a specific item type and all its properties.</p>
 <p><strong>Response Data</strong></p>
 <pre><code>{
     item_id: int,
     name: string,
     description: string,
     price: decimal(2),
+    properties: [{
+        property_id: int,
+        name: string,
+        description: string,
+        type: string
+    }]
     restricted_level: int
 }
 </code></pre>
@@ -353,11 +393,53 @@ description: string,
 price: decimal(2),
 restricted_level: int
 </code></pre>
+<p><strong>Response Data</strong></p>
+<p>See GET <code>/api/itemtypes/:item_id</code>, where  <code>:item_id</code> is the ID of the edited item type.</p>
 <h3 id="delete-apiitemtypesitem_id">DELETE <code>/api/itemtypes/:item_id</code></h3>
 <p>Delete a specific item type. <em>What happens if there are still items of the type in the inventory?</em></p>
 <p><strong>Required Permissions</strong></p>
 <p>Delete Item Types permission.</p>
 <p>Cannot delete an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<h3 id="post-apiitemtypesitem_idprops-wip">POST <code>/api/itemtypes/:item_id/props</code> (WIP)</h3>
+<p>Add a property to a specific item type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Item Types permission.</p>
+<p>Cannot add a property to an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
+<pre><code>name: string,
+description: string,
+type: string
+</code></pre>
+<p><strong>Response Body</strong></p>
+<pre><code>{
+    property_id: int,
+    name: string,
+    description: string,
+    type: string
+}
+</code></pre>
+<h3 id="put-apiitemtypespropsproperty_id-wip">PUT <code>/api/itemtypes/props/:property_id</code> (WIP)</h3>
+<p>Edit an item type property. Cannot change the property's type.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Item Types permission.</p>
+<p>Cannot edit a property on an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
+<p><strong>Request Body</strong></p>
+<pre><code>name: string,
+description: string
+</code></pre>
+<p><strong>Response Body</strong></p>
+<pre><code>{
+    property_id: int,
+    name: string,
+    description: string,
+    type: string
+}
+</code></pre>
+<h3 id="delete-apiitemtypespropsproperty_id-wip">DELETE <code>/api/itemtypes/props/:property_id</code> (WIP)</h3>
+<p>Delete an item type property.</p>
+<p><strong>Required Permissions</strong></p>
+<p>Edit Item Types permission.</p>
+<p>Cannot delete a property from an item type with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
 <h3 id="get-apilocations">GET <code>/api/locations</code></h3>
 <p>Gets all locations.</p>
 <p><strong>Response Data</strong></p>
@@ -381,11 +463,7 @@ description: string,
 restricted_level: int
 </code></pre>
 <p><strong>Response Data</strong></p>
-<pre><code>{
-    location_id: int
-}
-</code></pre>
-<p><code>location_id</code> is the ID of the newly created location.</p>
+<p>See GET <code>/api/locations/:location_id</code>, where  <code>:location_id</code> is the ID of the newly defined location.</p>
 <h3 id="get-apilocationslocation_id">GET <code>/api/locations/:location_id</code></h3>
 <p>Gets a specific location.</p>
 <p><strong>Response Data</strong></p>
@@ -407,6 +485,8 @@ restricted_level: int
 description: string,
 restricted_level: int
 </code></pre>
+<p><strong>Response Data</strong></p>
+<p>See GET <code>/api/locations/:location_id</code>, where  <code>:location_id</code> is the ID of the edited location.</p>
 <h3 id="delete-apilocationslocation_id">DELETE <code>/api/locations/:location_id</code></h3>
 <p>Delete a specific location. <em>What happens if there are still items in that location?</em></p>
 <p><strong>Required Permissions</strong></p>

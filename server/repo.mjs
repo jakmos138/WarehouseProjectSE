@@ -336,35 +336,101 @@ class Repo {
       catch {
         return cb(this.MALFORMED);
       }
-      sql.query(`DELETE FROM dbo.Items WHERE item_index = @item_index;`)
+      sr.query(`DELETE FROM dbo.Items WHERE item_index = @item_index;`)
       .then(res => {
-        let rs = res.recordset;
-        if (rs.length == 0) return cb(this.NOT_FOUND);
-        let e = rs[0];
-        let ae = {id: e.item_index,
-                  type: {
-                    id: e.item_id,
-                    name: e.t_name,
-                    description: e.t_desc,
-                    price: e.price,
-                    restricted_level: e.t_rl
-                  },
-                  location: {
-                    id: e.location_id,
-                    name: e.l_name,
-                    description: e.l_desc,
-                    restricted_level: e.l_rl
-                  },
-                  details: e.details,
-                  quantity: e.quantity,
-                  restricted_level: e.i_rl
-          };
-        cb(null, ae);
+        cb(null, res);
       })
       .catch(err => {
         cb(err);
       });
     });    
+  }
+
+  getCommonItemTypeId = function(item_index, property_id, cb) {
+    // Only meant for internal repo use.
+    this.pool.request().input('item_index', sql.Int, item_index)
+      .input('property_id', sql.Int, property_id)
+      .query(
+        `WITH CTE AS (
+           SELECT item_id FROM dbo.Items WHERE item_index = 1
+           INTERSECT
+           SELECT item_id FROM dbo.ItemTypeProperties WHERE property_id = 2
+         )
+         SELECT CTE.item_id, IT.restricted_level FROM CTE LEFT JOIN dbo.ItemTypes AS IT ON CTE.item_id = IT.item_id;`,
+      )
+      .then(res => {
+        cb(null, res.recordset[0] ?? null);
+      })
+      .catch(err => {
+        cb(err);
+      });
+  }
+
+  updateItemProperty = function(req, item_index, property_id, value, cb) {
+    if (req.user === undefined) return cb(this.UNAUTHORIZED);
+    this.getCommonItemTypeId(item_index, property_id, (err, res) => {
+      if (err) return cb(err);
+      if (res == null) return cb(this.NOT_FOUND);
+      if (req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
+      let sr;
+      try {
+        sr = this.pool.request().input('item_index', sql.Int, item_index)
+          .input('property_id', sql.Int, property_id)
+          .input('value', sql.VarChar, value);
+      }
+      catch {
+        return cb(this.MALFORMED);
+      }
+      sr.query(
+        `BEGIN TRANSACTION;
+
+         UPDATE dbo.ItemProperties WITH (UPDLOCK, SERIALIZABLE) SET value = @value
+           WHERE item_index = @item_index
+           AND property_id = @property_id;
+
+         IF @@ROWCOUNT = 0
+         BEGIN
+           INSERT dbo.ItemProperties (item_index, property_id, value) VALUES(@item_index, @property_id, @value);
+         END
+
+         COMMIT TRANSACTION;
+        `
+      )
+      .then(res => {
+        cb(null, {value: value});
+      })
+      .catch(err => {
+        cb(err);
+      })
+    })
+  }
+
+  deleteItemProperty = function(req, item_index, property_id, cb) {
+    if (req.user === undefined) return cb(this.UNAUTHORIZED);
+    this.getCommonItemTypeId(item_index, property_id, (err, res) => {
+      if (err) return cb(err);
+      if (res == null) return cb(this.NOT_FOUND);
+      if (req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
+      let sr;
+      try {
+        sr = this.pool.request().input('item_index', sql.Int, item_index)
+          .input('property_id', sql.Int, property_id)
+      }
+      catch {
+        return cb(this.MALFORMED);
+      }
+      sr.query(
+        `DELETE FROM dbo.ItemProperties
+           WHERE item_index = @item_index
+           AND property_id = @property_id;`
+      )
+      .then(res => {
+        cb(null, res);
+      })
+      .catch(err => {
+        cb(err);
+      })
+    })
   }
 
   getItemTypes = function(cb) {
@@ -419,6 +485,27 @@ class Repo {
     })
   }
 
+  getItemTypeIdFromPropertyId = function(id, cb) {
+    let sr;
+    try {
+      sr = this.pool.request().input('id', sql.Int, id);
+    }
+    catch {
+      return cb(this.MALFORMED);
+    }
+    sr.query(`WITH PCTE AS (
+                SELECT item_id FROM dbo.ItemTypeProperties WHERE property_id = @id
+              )
+              SELECT IT.item_id, IT.restricted_level FROM dbo.ItemTypes IT INNER JOIN PCTE ON IT.item_id = PCTE.item_id;`)
+    .then(res => {
+      if (res.recordset.length === 0) cb(this.NOT_FOUND);
+      else cb(null, res.recordset[0]);
+    })
+    .catch(err => {
+      cb(err);
+    });
+  }
+
   addItemType = function(req, itype, cb) {
     if (req.user === undefined || req.user.permission_level > itype.restricted_level) return cb(this.UNAUTHORIZED);
     let sr;
@@ -442,6 +529,7 @@ class Repo {
 
   updateItemType = function(req, id, itype, cb) {
     this.getItemTypeById(id, (err, res) => {
+      if (err) return cb(err);
       if (req.user === undefined || req.user.permission_level > itype.restricted_level || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -467,6 +555,7 @@ class Repo {
 
   deleteItemType = function(req, id, cb) {
     this.getItemTypeById(id, (err, res) => {
+      if (err) return cb(err);
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -483,6 +572,92 @@ class Repo {
         cb(err);
       });
     })    
+  }
+
+  addItemTypeProperty = function(req, itemId, prop, cb) {
+    this.getItemTypeById(itemId, (err, res) => {
+      if (err) return cb(err);
+      if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
+      let sr;
+      try {
+        sr = this.pool.request().input('item_id', sql.VarChar, itemId)
+          .input('name', sql.VarChar, prop.name)
+          .input('description', sql.VarChar, prop.description)
+          .input('type', sql.VarChar, prop.type);
+      }
+      catch {
+        return cb(this.MALFORMED);
+      }
+      sr.query(`INSERT INTO dbo.ItemTypeProperties (item_id, name, description, type)
+                OUTPUT inserted.property_id
+                VALUES (@item_id, @name, @description, @type);`)
+      .then(res => {
+        let e = {
+          property_id: res.recordset[0].property_id,
+          name: prop.name,
+          description: prop.description,
+          type: prop.type
+        };
+        cb(null, e);
+      })
+      .catch(err => {
+        cb(err);
+      });
+    })  
+  }
+
+  updateItemTypeProperty = function(req, propId, prop, cb) {
+    this.getItemTypeIdFromPropertyId(propId, (err, res) => {
+      if (err) return cb(err);
+      if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
+      let sr;
+      try {
+        sr = this.pool.request().input('property_id', sql.VarChar, propId)
+          .input('name', sql.VarChar, prop.name)
+          .input('description', sql.VarChar, prop.description);
+      }
+      catch {
+        return cb(this.MALFORMED);
+      }
+      sr.query(`UPDATE dbo.ItemTypeProperties
+                SET name = @name, description = @description
+                OUTPUT INSERTED.type
+                WHERE property_id = @property_id;`)
+      .then(res => {
+        let e = {
+          property_id: propId,
+          name: prop.name,
+          description: prop.description,
+          type: res.recordset[0].type
+        };
+        cb(null, e);
+      })
+      .catch(err => {
+        cb(err);
+      });
+    })  
+  }
+
+  deleteItemTypeProperty = function(req, propId, cb) {
+    this.getItemTypeIdFromPropertyId(propId, (err, res) => {
+      if (err) return cb(err);
+      if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
+      let sr;
+      try {
+        sr = this.pool.request().input('property_id', sql.VarChar, propId);
+      }
+      catch {
+        return cb(this.MALFORMED);
+      }
+      sr.query(`DELETE FROM dbo.ItemTypeProperties
+                WHERE property_id = @property_id;`)
+      .then(res => {
+        cb(null, res);
+      })
+      .catch(err => {
+        cb(err);
+      });
+    })  
   }
 
   getLocations = function(cb) {
@@ -538,6 +713,7 @@ class Repo {
 
   updateLocation = function(req, id, loc, cb) {
     this.getLocationById(id, (err, res) => {
+      if (err) return cb(err);
       if (req.user === undefined || req.user.permission_level > loc.restricted_level || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -562,6 +738,7 @@ class Repo {
 
   deleteLocation = function(req, id, cb) {
     this.getLocationById(id, (err, res) => {
+      if (err) return cb(err);
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {

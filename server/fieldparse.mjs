@@ -11,4 +11,4 @@ const validateProperty = function(value, type) {
 
 }
 
-export { secondaryParseFields };
+export { secondaryParseFields, validateProperty };

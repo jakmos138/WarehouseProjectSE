@@ -83,8 +83,8 @@ Of course, the types must match.
 The following success status codes are typically returned by endpoints with the given methods:
 
 - `200 OK` **GET**;
-- `201 Created` **POST** - the response typically contains the ID of the created resource;
-- `204 No Content` **PUT, DELETE**
+- `201 Created` **POST, PUT** - the response typically contains the ID of the created resource;
+- `204 No Content` **DELETE**
 Exceptions from this rule are specified per endpoint.
 
 ## Error responses
@@ -205,6 +205,11 @@ Gets a specific item batch and all its property values.
     restricted_level: int
 }
 ```
+The possible property `value`s depend on the property's `type`:
+- `"boolean"` - `"true"` or `"false"`
+- `"int"` or `"decimal"` - string representation of number
+- `"string"` - any string
+- `"datetime"` - string representation of number of seconds since Unix epoch (January 1st, 1970, 00:00 UTC)
 
 ### PUT `/api/items/:item_index`
 Edits a specific item batch. Cannot change the batch's item type.
@@ -238,14 +243,14 @@ Delete a specific item batch. Cannot change the batch's item type.
 Delete Items permission.
 
 Cannot delete an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
-### PUT `/api/items/:item_index/props/:property_id
-Updates a property value on an item batch.
+### PUT `/api/items/:item_index/props/:property_id`
+Creates/updates a property value on an item batch. The property must be assigned to the same item type as the item batch, otherwise `404 Not Found` will be returned.
 
 **Required Permissions**
 
 Edit Items permission.
 
-Cannot edit an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
+Cannot create/update on an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
 
 **Request Body**
 ```
@@ -262,6 +267,20 @@ value: string
   - string representation of said integer
   - string of `YYYY-MM-DDThh:mm:ssZ` format, 24-hour system, time in UTC, must not be before Unix epoch, for example: `2025-02-06T15:13:23Z`
 
+**Response**
+```
+{
+    value: string
+}
+```
+### DELETE `/api/items/:item_index/props/:property_id`
+Deletes a property value from an item batch. The property must be assigned to the same item type as the item batch, otherwise `404 Not Found` will be returned.
+
+**Required Permissions**
+
+Edit Items permission.
+
+Cannot delete from an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
 ### GET `/api/itemtypes`
 Gets all defined item types.
 
@@ -348,6 +367,61 @@ Delete a specific item type. *What happens if there are still items of the type 
 Delete Item Types permission.
 
 Cannot delete an item type with a `restricted_level` for higher access than the user's own `permission_level`.
+### POST `/api/itemtypes/:item_id/props`
+Add a property to a specific item type.
+
+**Required Permissions**
+
+Edit Item Types permission.
+
+Cannot add a property to an item type with a `restricted_level` for higher access than the user's own `permission_level`.
+
+**Request Body**
+```
+name: string,
+description: string,
+type: string
+```
+**Response Body**
+```
+{
+    property_id: int,
+    name: string,
+    description: string,
+    type: string
+}
+```
+### PUT `/api/itemtypes/props/:property_id`
+Edit an item type property. Cannot change the property's type.
+
+**Required Permissions**
+
+Edit Item Types permission.
+
+Cannot edit a property on an item type with a `restricted_level` for higher access than the user's own `permission_level`.
+
+**Request Body**
+```
+name: string,
+description: string
+```
+**Response Body**
+```
+{
+    property_id: int,
+    name: string,
+    description: string,
+    type: string
+}
+```
+### DELETE `/api/itemtypes/props/:property_id`
+Delete an item type property.
+
+**Required Permissions**
+
+Edit Item Types permission.
+
+Cannot delete a property from an item type with a `restricted_level` for higher access than the user's own `permission_level`.
 ### GET `/api/locations`
 Gets all locations.
 
