@@ -243,7 +243,7 @@ Delete a specific item batch. Cannot change the batch's item type.
 Delete Items permission.
 
 Cannot delete an item batch with a `restricted_level` for higher access than the user's own `permission_level`.
-### PUT `/api/items/:item_index/props/:property_id` (WIP)
+### PUT `/api/items/:item_index/props/:property_id`
 Creates/updates a property value on an item batch. The property must be assigned to the same item type as the item batch, otherwise `404 Not Found` will be returned.
 
 **Required Permissions**
@@ -273,7 +273,7 @@ value: string
     value: string
 }
 ```
-### DELETE `/api/items/:item_index/props/:property_id` (WIP)
+### DELETE `/api/items/:item_index/props/:property_id`
 Deletes a property value from an item batch. The property must be assigned to the same item type as the item batch, otherwise `404 Not Found` will be returned.
 
 **Required Permissions**
@@ -367,7 +367,7 @@ Delete a specific item type. *What happens if there are still items of the type 
 Delete Item Types permission.
 
 Cannot delete an item type with a `restricted_level` for higher access than the user's own `permission_level`.
-### POST `/api/itemtypes/:item_id/props` (WIP)
+### POST `/api/itemtypes/:item_id/props`
 Add a property to a specific item type.
 
 **Required Permissions**
@@ -391,7 +391,7 @@ type: string
     type: string
 }
 ```
-### PUT `/api/itemtypes/props/:property_id` (WIP)
+### PUT `/api/itemtypes/props/:property_id`
 Edit an item type property. Cannot change the property's type.
 
 **Required Permissions**
@@ -414,7 +414,7 @@ description: string
     type: string
 }
 ```
-### DELETE `/api/itemtypes/props/:property_id` (WIP)
+### DELETE `/api/itemtypes/props/:property_id`
 Delete an item type property.
 
 **Required Permissions**
