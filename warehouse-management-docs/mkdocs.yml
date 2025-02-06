@@ -13,3 +13,15 @@ nav:
   - Database Model: database.md
   - UI Design: ui-design.md
   - Use Case Diagram: use-case.md
+  - Frontend:
+      - Overview: frontend-overview.md
+      - Components:
+          - Account: components/account.md
+          - Header: components/header.md
+          - Orders Table: components/orders-table.md
+          - Sidebar: components/sidebar.md
+          - Sign In: components/signin.md
+      - Pages:
+          - Account Page: pages/account-page.md
+          - Dashboard: pages/dashboard.md
+          - Orders: pages/orders.md

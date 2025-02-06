@@ -8,11 +8,11 @@ This documentation provides an in-depth guide to the **features, structure, and 
 ---
 
 ## Business Goals & Objectives  
-The Warehouse Management System aims to:
-- **Improve inventory accuracy** by reducing human errors in tracking and storage.
-- **Enable real-time stock visibility** for optimized warehouse operations.
-- **Streamline order fulfillment and dispatching** to reduce processing delays.
-- **Enhance security** through **role-based access control** for different user types.
+The Warehouse Management System aims to:  
+- **Improve inventory accuracy** by reducing human errors in tracking and storage.  
+- **Enable real-time stock visibility** for optimized warehouse operations.  
+- **Streamline order fulfillment and dispatching** to reduce processing delays.  
+- **Enhance security** through **role-based access control** for different user types.  
 - **Automate alerts and notifications** for **low stock, misplaced items, and urgent restocking needs**.
 
 By addressing these challenges, the WMS ensures a **cost-effective, scalable, and efficient warehouse environment**.
