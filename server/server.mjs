@@ -20,17 +20,11 @@ import router_items from './routes/items.mjs'
 import router_itemtypes from './routes/itemtypes.mjs'
 import router_locations from './routes/locations.mjs'
 
-try {
-  repo.connect(process.env.DB_SERVER,
-    process.env.DB_PORT,
-    process.env.DB_NAME,
-    process.env.DB_USER,
-    process.env.DB_PWD).then(() => {console.log("Connected to database")});
-}
-catch(e) {
-  console.log(e);
-}
-
+repo.connect(process.env.DB_SERVER,
+             process.env.DB_PORT,
+             process.env.DB_NAME,
+             process.env.DB_USER,
+             process.env.DB_PWD);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,7 +46,6 @@ app.use(express_session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.json());
 
 app.get('/', (req, res) => {
   let n = req.user ? req.user.username : "anonymous";

@@ -1,4 +1,5 @@
 const crypto = await import('node:crypto');
+import { sendSuccess, sendError } from "./resutil.mjs";
 
 import sql from "mssql";
 
@@ -87,24 +88,27 @@ class Repo {
   }
 
   addUser = function(req, user, cb) {
-    if (req.user === undefined || req.user.permission_level > user.permission_level) return cb(this.UNAUTHORIZED);
-    getUserByName(user.username, (err, res) => {
+    // the line below if we want to have the accounts created by other users (admins) only
+    // if (req.user === undefined || req.user.permission_level > user.permission_level) return cb(this.UNAUTHORIZED);
+    this.getUserByName(user.username, (err, res) => {
       if (err == null) return cb(this.CONFLICT);
       else if (err != this.NOT_FOUND) return cb(err);
       let sr;
       try {
         sr = this.pool.request().input('username', sql.VarChar, user.username)
         .input('password', sql.VarChar, user.password)
-        .input('phone', sql.VarChar, user.phone)
+        .input('phone', sql.VarChar, "+00000000000")
         .input('email', sql.VarChar, user.email)
-        .input('permission_level', sql.Int, user.permission_level);
+        .input('permission_level', sql.Int, 0);
       }
       catch {
         return cb(this.MALFORMED);
       }
-      sr.query("INSERT INTO dbo.Users (username, password, phone, email, permission_level) VALUES(@username, @password, @phone, @email, @permission_level);")
+      sr.query(`INSERT INTO dbo.Users (username, password, phone, email, permission_level)
+        OUTPUT inserted.user_id, inserted.username
+        VALUES(@username, @password, @phone, @email, @permission_level);`) // user_id is enough for serialization?
       .then(res => {
-        cb(null, res);
+        cb(null, res.recordset[0]);
       })
       .catch(err => {
         cb(err);
@@ -113,7 +117,7 @@ class Repo {
   }
 
   editUser = function(req, id, user, cb) {
-    getUserById(id, (err, res) => {
+    this.getUserById(id, (err, res) => {
       if (err != null) return cb(err);
       if (req.user === undefined || req.user.permission_level > user.permission_level || req.user.permission_level > res.permission_level) return cb(this.UNAUTHORIZED);
       let sr;
@@ -139,7 +143,7 @@ class Repo {
   }
 
   deleteUser = function(req, id, cb) {
-    getUserById(id, (err, res) => {
+    this.getUserById(id, (err, res) => {
       if (err != null) return cb(err);
       if (req.user === undefined || req.user.permission_level > res.permission_level) return cb(this.UNAUTHORIZED);
       let sr;
@@ -261,7 +265,7 @@ class Repo {
       sr = this.pool.request().input('item_id', sql.VarChar, item.item_id)
       .input('location_id', sql.VarChar, item.location_id)
       .input('details', sql.VarChar, item.details)
-      .input('quantity', sql.Decimal, item.quantity)
+      .input('quantity', sql.Decimal(10, 4), item.quantity)
       .input('restricted_level', sql.Int, item.restricted_level);
     }
     catch {
@@ -269,7 +273,7 @@ class Repo {
     }
     sr.query("INSERT INTO dbo.Items (item_id, location_id, details, quantity, restricted_level) OUTPUT inserted.item_index VALUES(@item_id, @location_id, @details, @quantity, @restricted_level);")
     .then(res => {
-      cb(null, res);
+      cb(null, res.recordset[0]);
     })
     .catch(err => {
       cb(err);
@@ -277,13 +281,12 @@ class Repo {
   }
 
   updateItem = function(req, id, item, cb) {
-    getItemById(id, (err, res) => {
+    this.getItemById(id, (err, res) => {
       if (err != null) return cb(err);
       if (req.user === undefined || req.user.permission_level > res.restricted_level || req.user.permission_level > item.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
         sr = this.pool.request().input('item_index', sql.Int, id)
-        .input('item_id', sql.Int, item.item_id)
         .input('location_id', sql.Int, item.location_id)
         .input('details', sql.VarChar, item.details)
         .input('quantity', sql.Decimal, item.quantity)
@@ -292,31 +295,12 @@ class Repo {
       catch {
         return cb(this.MALFORMED);
       }
-      sql.query(`UPDATE dbo.Items SET item_id = @item_id, location_id = @location_id, details = @details, quantity = @quantity, restricted_level = @restricted_level
+      sql.query(`UPDATE dbo.Items SET location_id = @location_id, details = @details, quantity = @quantity, restricted_level = @restricted_level
                 WHERE item_index = @item_index;`)
       .then(res => {
         let rs = res.recordset;
         if (rs.length == 0) return cb(this.NOT_FOUND);
-        let e = rs[0];
-        let ae = {id: e.item_index,
-                  type: {
-                    id: e.item_id,
-                    name: e.t_name,
-                    description: e.t_desc,
-                    price: e.price,
-                    restricted_level: e.t_rl
-                  },
-                  location: {
-                    id: e.location_id,
-                    name: e.l_name,
-                    description: e.l_desc,
-                    restricted_level: e.l_rl
-                  },
-                  details: e.details,
-                  quantity: e.quantity,
-                  restricted_level: e.i_rl
-          };
-        cb(null, ae);
+        cb(null, res);
       })
       .catch(err => {
         cb(err);
@@ -325,7 +309,7 @@ class Repo {
   }
 
   deleteItem = function(req, id, cb) {
-    getItemById(id, (err, res) => {
+    this.getItemById(id, (err, res) => {
       if (err != null) return cb(err);
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
@@ -409,9 +393,9 @@ class Repo {
     catch {
       return cb(this.MALFORMED);
     }
-    sr.query("INSERT INTO dbo.ItemTypes (name, description, price, permission_level) OUTPUT inserted.item_id VALUES(@name, @description, @price, @permission_level);")
+    sr.query("INSERT INTO dbo.ItemTypes (name, description, price, restricted_level) OUTPUT inserted.item_id VALUES(@name, @description, @price, @restricted_level);")
     .then(res => {
-      cb(null, res);
+      cb(null, res.recordset[0]);
     })
     .catch(err => {
       cb(err);
@@ -419,7 +403,7 @@ class Repo {
   }
 
   updateItemType = function(req, id, itype, cb) {
-    getItemTypeById(id, (err, res) => {
+    this.getItemTypeById(id, (err, res) => {
       if (req.user === undefined || req.user.permission_level > itype.restricted_level || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -432,7 +416,7 @@ class Repo {
       catch {
         return cb(this.MALFORMED);
       }
-      sr.query(`UPDATE dbo.ItemTypes SET name = @name, description = @description, price = @price, permission_level = @permission_level
+      sr.query(`UPDATE dbo.ItemTypes SET name = @name, description = @description, price = @price, restricted_level = @restricted_level
                 WHERE item_id = @item_id;`)
       .then(res => {
         cb(null, res);
@@ -444,7 +428,7 @@ class Repo {
   }
 
   deleteItemType = function(req, id, cb) {
-    getItemTypeById(id, (err, res) => {
+    this.getItemTypeById(id, (err, res) => {
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -505,9 +489,9 @@ class Repo {
     catch {
       return cb(this.MALFORMED);
     }
-    sr.query("INSERT INTO dbo.Locations (name, description, permission_level) OUTPUT inserted.location_id VALUES(@name, @description, @permission_level);")
+    sr.query("INSERT INTO dbo.Locations (name, description, restricted_level) OUTPUT inserted.location_id VALUES(@name, @description, @restricted_level);")
     .then(res => {
-      cb(null, res);
+      cb(null, res.recordset[0]);
     })
     .catch(err => {
       cb(err);
@@ -515,7 +499,7 @@ class Repo {
   }
 
   updateLocation = function(req, id, loc, cb) {
-    getLocationById(id, (err, res) => {
+    this.getLocationById(id, (err, res) => {
       if (req.user === undefined || req.user.permission_level > loc.restricted_level || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -527,7 +511,7 @@ class Repo {
       catch {
         return cb(this.MALFORMED);
       }
-      sr.query(`UPDATE dbo.Locations SET name = @name, description = @description, permission_level = @permission_level
+      sr.query(`UPDATE dbo.Locations SET name = @name, description = @description, restricted_level = @restricted_level
                 WHERE location_id = @location_id;`)
       .then(res => {
         cb(null, res);
@@ -539,7 +523,7 @@ class Repo {
   }
 
   deleteLocation = function(req, id, cb) {
-    getLocationById(id, (err, res) => {
+    this.getLocationById(id, (err, res) => {
       if (req.user === undefined || req.user.permission_level > res.restricted_level) return cb(this.UNAUTHORIZED);
       let sr;
       try {
@@ -559,25 +543,26 @@ class Repo {
   }
 
   errorHandling = function(err, res, next) {
-    if (err == this.UNAUTHORIZED) {
-      res.status(403);
-      res.send("403 Forbidden");
-    }
-    else if (err == this.MALFORMED) {
-      res.status(400);
-      res.send("400 Bad Request");
-    } 
-    else if (err == this.NOT_FOUND) {
-      res.status(404);
-      res.send("404 Not Found");
-    }
-    else if (err == this.CONFLICT) {
-      res.status(409);
-      res.send("409 Conflict");
-    }
-    else if (err) {
-      res.status(500);
-      res.send("500 Internal Server Error");
+    if (err) {
+      if (err == this.UNAUTHORIZED) {
+        sendError(res, 403);
+      }
+      else if (err == this.MALFORMED) {
+        sendError(res, 400);
+      } 
+      else if (err == this.NOT_FOUND) {
+        sendError(res, 404);
+      }
+      else if (err == this.CONFLICT) {
+        sendError(res, 409);
+      }
+      else if (err instanceof sql.RequestError) {
+        if (err.number === 547) sendError(res, 409); // conflict with constraint
+        else sendError(res, 500);
+      }
+      else {
+        sendError(res, 500);
+      }
     }
     else next();
   }
