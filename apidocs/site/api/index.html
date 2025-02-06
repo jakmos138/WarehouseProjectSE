@@ -183,8 +183,8 @@ Of course, the types must match.</p>
 <p>The following success status codes are typically returned by endpoints with the given methods:</p>
 <ul>
 <li><code>200 OK</code> <strong>GET</strong>;</li>
-<li><code>201 Created</code> <strong>POST</strong> - the response typically contains the ID of the created resource;</li>
-<li><code>204 No Content</code> <strong>PUT, DELETE</strong>
+<li><code>201 Created</code> <strong>POST, PUT</strong> - the response typically contains the ID of the created resource;</li>
+<li><code>204 No Content</code> <strong>DELETE</strong>
 Exceptions from this rule are specified per endpoint.</li>
 </ul>
 <h2 id="error-responses">Error responses</h2>
@@ -310,7 +310,7 @@ restricted_level: int
 <p>Delete Items permission.</p>
 <p>Cannot delete an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
 <h3 id="put-apiitemsitem_indexpropsproperty_id-wip">PUT <code>/api/items/:item_index/props/:property_id</code> (WIP)</h3>
-<p>Creates/updates a property value on an item batch.</p>
+<p>Creates/updates a property value on an item batch. The property must be assigned to the same item type as the item batch, otherwise <code>404 Not Found</code> will be returned.</p>
 <p><strong>Required Permissions</strong></p>
 <p>Edit Items permission.</p>
 <p>Cannot create/update on an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
@@ -328,8 +328,13 @@ restricted_level: int
 <li>string representation of said integer</li>
 <li>string of <code>YYYY-MM-DDThh:mm:ssZ</code> format, 24-hour system, time in UTC, must not be before Unix epoch, for example: <code>2025-02-06T15:13:23Z</code></li>
 </ul>
+<p><strong>Response</strong></p>
+<pre><code>{
+    value: string
+}
+</code></pre>
 <h3 id="delete-apiitemsitem_indexpropsproperty_id-wip">DELETE <code>/api/items/:item_index/props/:property_id</code> (WIP)</h3>
-<p>Deletes a property value from an item batch.</p>
+<p>Deletes a property value from an item batch. The property must be assigned to the same item type as the item batch, otherwise <code>404 Not Found</code> will be returned.</p>
 <p><strong>Required Permissions</strong></p>
 <p>Edit Items permission.</p>
 <p>Cannot delete from an item batch with a <code>restricted_level</code> for higher access than the user's own <code>permission_level</code>.</p>
@@ -406,10 +411,12 @@ description: string,
 type: string
 </code></pre>
 <p><strong>Response Body</strong></p>
-<pre><code>    property_id: int,
+<pre><code>{
+    property_id: int,
     name: string,
     description: string,
     type: string
+}
 </code></pre>
 <h3 id="put-apiitemtypespropsproperty_id-wip">PUT <code>/api/itemtypes/props/:property_id</code> (WIP)</h3>
 <p>Edit an item type property. Cannot change the property's type.</p>
@@ -421,10 +428,12 @@ type: string
 description: string
 </code></pre>
 <p><strong>Response Body</strong></p>
-<pre><code>    property_id: int,
+<pre><code>{
+    property_id: int,
     name: string,
     description: string,
     type: string
+}
 </code></pre>
 <h3 id="delete-apiitemtypespropsproperty_id-wip">DELETE <code>/api/itemtypes/props/:property_id</code> (WIP)</h3>
 <p>Delete an item type property.</p>

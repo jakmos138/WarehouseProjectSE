@@ -83,8 +83,8 @@ Of course, the types must match.
 The following success status codes are typically returned by endpoints with the given methods:
 
 - `200 OK` **GET**;
-- `201 Created` **POST** - the response typically contains the ID of the created resource;
-- `204 No Content` **PUT, DELETE**
+- `201 Created` **POST, PUT** - the response typically contains the ID of the created resource;
+- `204 No Content` **DELETE**
 Exceptions from this rule are specified per endpoint.
 
 ## Error responses
@@ -384,10 +384,12 @@ type: string
 ```
 **Response Body**
 ```
+{
     property_id: int,
     name: string,
     description: string,
     type: string
+}
 ```
 ### PUT `/api/itemtypes/props/:property_id` (WIP)
 Edit an item type property. Cannot change the property's type.
@@ -405,10 +407,12 @@ description: string
 ```
 **Response Body**
 ```
+{
     property_id: int,
     name: string,
     description: string,
     type: string
+}
 ```
 ### DELETE `/api/itemtypes/props/:property_id` (WIP)
 Delete an item type property.

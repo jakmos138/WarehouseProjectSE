@@ -46,7 +46,7 @@ router.put("/:itemId", checkPerm(5), (req, res) => {
     let formData = secondaryParseFields(fields, "location_id", "details", "quantity", "restricted_level");
     repo.updateItem(req, req.params.itemId, formData, (err, data) => {
       repo.errorHandling(err, res, () => {
-        sendSuccess(res, 204, data);
+        sendSuccess(res, 200, data);
       })
     });
   })
@@ -59,12 +59,27 @@ router.delete("/:itemId", checkPerm(6), (req, res) => {
   });
 });
 
-router.put("/:itemId/props/:propertyId", (req, res) => {
-  sendError(res, 501);
+router.put("/:itemId/props/:propertyId", checkPerm(5), (req, res) => {
+  const form = formidable({});
+  form.parse(req, (err, fields, files) => {
+    if (err) {
+      sendError(res, 500);
+      return;
+    }
+    let formData = secondaryParseFields(fields, "value");
+    repo.updateItemProperty(req, req.params.itemId, req.params.propertyId, formData.value, (err, data) => {
+      repo.errorHandling(err, res, () => {
+        sendSuccess(res, 200, data);
+      })
+    });
+  })  
 });
-
-router.delete("/:itemId/props/:propertyId", (req, res) => {
-  sendError(res, 501);
+router.delete("/:itemId/props/:propertyId", checkPerm(5), (req, res) => {
+  repo.deleteItemProperty(req, req.params.itemId, req.params.propertyId, (err, data) => {
+    repo.errorHandling(err, res, () => {
+      sendSuccess(res, 204);
+    })
+  });
 });
 
 export default router;
