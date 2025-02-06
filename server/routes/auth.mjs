@@ -4,8 +4,8 @@ import passport_local from 'passport-local';
 const LocalStrategy = passport_local.Strategy;
 import crypto from 'node:crypto';
 import bodyParser from 'body-parser';
-import formidable, {errors as formidableErrors} from 'formidable';
-import { secondaryParseFields } from "../fieldparse.mjs"
+import formidable, { errors as formidableErrors } from 'formidable';
+import { secondaryParseFields } from "../fieldparse.mjs";
 import { repo } from '../repo.mjs';
 import { sendSuccess, sendError } from '../resutil.mjs';
 
@@ -14,8 +14,11 @@ passport.use(new LocalStrategy(
     usernameField: "email",
     passwordField: "password"
   },
-  function(email, password, cb) {
-    repo.getUserByEmail(email, function(err, user) {
+  function (email, password, cb) {
+    if (email === undefined || password === undefined) {
+      return cb(400);
+    }
+    repo.getUserByEmail(email, function (err, user) {
       if (err) { return cb(err); }
       if (!user) {
         return cb(null, false);
@@ -33,21 +36,21 @@ passport.use(new LocalStrategy(
   }
 ));
 
-passport.serializeUser(function(user, cb) {
+passport.serializeUser(function (user, cb) {
   cb(null, user.user_id);
 });
 
-passport.deserializeUser(function(id, cb) {
-  repo.getUserById(id, function(err, user) {
+passport.deserializeUser(function (id, cb) {
+  repo.getUserById(id, function (err, user) {
     if (err) return cb(err);
-    if (!user) return cb("Error - no such user"); // how is this cb passed?
+    if (!user) return cb("Error - no such user");
     return cb(null, user);
   });
 });
 
 let router = express.Router();
 
-let signup = function(req, res, next) {
+let signup = function (req, res, next) {
   const form = formidable({});
   form.parse(req, (err, fields, files) => {
     let formData = secondaryParseFields(fields, "username", "email", "password");
@@ -65,30 +68,23 @@ let signup = function(req, res, next) {
         })
       });
     });
-  })  
+  });
 }
 
 router.post("/signup", signup);
 
-/*router.post("/signin", passport.authenticate('local', {
-  successRedirect: "/",
-  failureRedirect: "/login",
-  failureMessage: true
-}));*/
-
-router.post("/signin", bodyParser.urlencoded(), (req, res, next) => {
+router.post("/signin", bodyParser.urlencoded(), bodyParser.json(), (req, res, next) => {
   passport.authenticate('local', (err, user) => {
     if (err) {
-      sendError(res, 500);
-    }
-    else if (!user) {
-      sendError(res, 401);
-    }
-    else {
-      req.login(user, function(err) {
+      if (err === 400) sendError(res, 400);
+      else sendError(res, 500);
+    } else if (!user) {
+      sendError(res, 401, { message: "Invalid username or password" });
+    } else {
+      req.login(user, function (err) {
         if (err) sendError(res, 500);
         else sendSuccess(res, 204);
-      })      
+      });
     }
   })(req, res, next);
 });
@@ -102,12 +98,10 @@ router.get("/profile", (req, res) => {
 router.delete('/signout', (req, res, next) => {
   if (req.user === undefined) {
     sendError(res, 401);
-  }
-  else req.logout(function(err) {
-    if (err) { 
+  } else req.logout(function (err) {
+    if (err) {
       sendError(res, 500);
-    }
-    else {
+    } else {
       sendSuccess(res, 204);
     }
   });

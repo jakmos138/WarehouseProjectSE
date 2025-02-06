@@ -16,18 +16,17 @@ const SignIn = (props: any) => {
       const endpoint = isSignUp ? '/api/auth/signup' : '/api/auth/signin';
       const response = await axios.post(
         `http://localhost:3000${endpoint}`,
-        { username, password },  // Sending username instead of email
+        { email: username, password },
         {
-          headers: {
-            'Content-Type': 'application/json'
-          }
+          headers: { 'Content-Type': 'application/json' },
+          withCredentials: true,  // Enable sending and receiving cookies
         }
       );
-      
+
       console.log(`${isSignUp ? 'Registration' : 'Login'} successful:`, response.data);
-      if(response.data.token) {
-        props.setSignedIn(true);
-      }
+
+      // Assume the backend sets a session cookie, no need to store a token manually
+      props.setSignedIn(true);
       alert(`${isSignUp ? 'Registration' : 'Login'} Successful!`);
       navigate('/');
       
