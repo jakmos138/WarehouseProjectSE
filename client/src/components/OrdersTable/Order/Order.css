@@ -37,3 +37,25 @@
     height: 32px;
    
 }
+.update-btn{
+    width: fit-content;
+    justify-content: center;
+    align-items: center;
+    background-color: #D3D3D3;
+    color: black;
+    border: none;
+    border-radius: 8px;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    padding: 4px 8px;
+    height: 40px;
+}
+.update-btn:hover{
+    background-color: #42A5F5;
+}
+.update-btn img{
+    width: auto;
+    height: 32px;

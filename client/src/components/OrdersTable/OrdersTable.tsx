@@ -4,6 +4,8 @@ import Order from './Order/Order';
 import './OrdersTable.css';
 import CreateItem from './CreateItem/CreateItem';
 
+
+
 const OrdersTable = () => {
     const [data, setData] = useState([]);  // State to store fetched data
     const [loading, setLoading] = useState(true); // State to manage loading state
@@ -38,6 +40,11 @@ const OrdersTable = () => {
         });
     };
 
+    const updateItem = (itemId) => {
+        // CODE HERE
+    }
+
+
     const handleItemCreated = (newItem) => {
         setData([...data, newItem]);  // Add the newly created item to the list
         setShowCreateForm(false);  // Hide the form after submission
@@ -53,9 +60,12 @@ const OrdersTable = () => {
 
     return (
         <div className="orders-table">
+            <div className="create-item-button-container">
             <button onClick={() => setShowCreateForm(!showCreateForm)} className="create-item-btn">
                 {showCreateForm ? 'Cancel' : 'Create Item'}
             </button>
+            </div>
+
 
             {/* Modal for CreateItem */}
             {showCreateForm && (
@@ -71,7 +81,8 @@ const OrdersTable = () => {
                         <th>Description</th>
                         <th>Location</th>
                         <th>Price</th>
-                        <th>Action</th>
+                        <th>Delete</th>
+                        <th>Edit</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,7 +94,8 @@ const OrdersTable = () => {
                                 description={item.type.description}
                                 location={item.location.name}
                                 price={item.type.price}
-                                deleteItem={() => deleteItem(item.id)}  // Pass deleteItem as prop
+                                deleteItem={() => deleteItem(item.id)}
+                                updateItem={() => updateItem(item.id)}
                             />
                         ))
                     ) : (

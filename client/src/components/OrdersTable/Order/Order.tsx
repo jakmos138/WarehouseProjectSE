@@ -1,5 +1,6 @@
 import './Order.css';
 import remove from '../../../assets/remove.png';
+import EditIcon from '../../../assets/edit.png';
 
 interface OrderProps {
   orderName: string;
@@ -19,6 +20,11 @@ const Order: React.FC<OrderProps> = (props) => {
       <td>
         <button className='delete-btn' onClick={props.deleteItem}>
           <img src={remove} alt="Delete" />
+        </button>
+      </td>
+      <td>
+        <button className='update-btn' onClick={props.updateItem}>
+          <img src={EditIcon} alt="" />
         </button>
       </td>
     </tr>

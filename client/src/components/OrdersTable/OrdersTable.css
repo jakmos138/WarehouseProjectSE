@@ -1,9 +1,8 @@
 .orders-table{
-    width: 1180px;
+    width: 1200px;
     height: auto;
-    margin: 75px 64px 32px 297px;
+    margin: 60px 64px 32px 282px;
     background-color: white;
-    border-radius: 8px;
     overflow-x: auto;
     border: 3px solid #395B64;
 }
@@ -12,7 +11,7 @@ table{
     border-collapse: collapse;
     border: 1px solid #e0e0e0;
     background-color: #ffffff; 
-    border-radius: 8px; 
+    border-radius:  0 0 8px 8px; 
     overflow: hidden;
 
     
@@ -30,7 +29,7 @@ thead th {
 tr{
     height: 60px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
     align-items: center;
     text-align: center;
     justify-content: center;
@@ -41,10 +40,12 @@ tr{
     background-color: #4CAF50;
     color: white;
     padding: 10px 15px;
+    margin: 16px;
     border: none;
     cursor: pointer;
     width: 160px;
-    font-size: 18px;
+    height: 40px;
+    font-size: 16px;
     
 }
 
@@ -79,21 +80,20 @@ tr{
     background-color: #45a049;
 }
 
-
-
-
-
-
-
-.create-item-btn {
-    margin-bottom: 10px;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
+.create-item-button-container {
+    background-color: #395B64;
+    width: 100%;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
 }
+
+
+
+
+
+
 
 .create-item-btn:hover {
     background-color: #45a049;
