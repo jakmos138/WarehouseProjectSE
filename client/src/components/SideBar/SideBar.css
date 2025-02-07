@@ -51,6 +51,8 @@
 }
 .orders img{
     margin-right: 8px;
+    height: 24px;
+    width: auto;
 }
 a {
     text-decoration: none;
