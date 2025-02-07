@@ -10,7 +10,10 @@ const CreateItemDropdown = ({types, locations, onTypeIdUpdate, onLocationIdUpdat
   return (
     <div className="dropdown-container">
       <div className="dropdown">
-        <button className="dropdown-button" onClick={() => setIsTypeOpen(!isTypeOpen)}>
+        <button type="button" className="dropdown-button" onClick={(e) => {
+          e.preventDefault();
+          setIsTypeOpen(!isTypeOpen)}
+          }>
           {selectedType.name}
         </button>
         {isTypeOpen && (
@@ -32,7 +35,10 @@ const CreateItemDropdown = ({types, locations, onTypeIdUpdate, onLocationIdUpdat
         )}
       </div>
       <div className="dropdown">
-        <button className="dropdown-button" onClick={() => setIsLocationOpen(!isLocationOpen)}>
+        <button type="button" className="dropdown-button" onClick={(e) => {
+          e.preventDefault();
+          setIsLocationOpen(!isLocationOpen)}
+          }>
           {selectedLocation.name}
         </button>
         {isLocationOpen && (

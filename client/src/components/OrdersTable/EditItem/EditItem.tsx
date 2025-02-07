@@ -6,7 +6,8 @@ import EditItemDropdown from './EditItemDropdown/EditItemDropdown';
 const EditItem = ({ item, onItemEdited, onClose, locations }) => {
   const [newItem, setNewItem] = useState({
     itemIndex: item.item_index,
-    locationId: item.location.location_id, 
+    locationId: item.location.location_id,
+    locationName: item.location.name,
     details: item.details, 
     quantity: item.quantity,
     restrictedLevel: item.restricted_level
@@ -37,7 +38,7 @@ const EditItem = ({ item, onItemEdited, onClose, locations }) => {
     })
     .then((response) => {
       onItemEdited(response.data.data);
-      setNewItem({ itemIndex: '', locationId: '', details: '', quantity: '', restrictedLevel: '' });
+      setNewItem({ itemIndex: '', locationId: '', locationName: '', details: '', quantity: '', restrictedLevel: '' });
       onClose(); // Close modal after success
     })
     .catch((err) => {
@@ -59,6 +60,10 @@ const EditItem = ({ item, onItemEdited, onClose, locations }) => {
         {error && <div className="error-message">{error}</div>}
         <form className='create-item-form' onSubmit={handleEditItem}>
           <EditItemDropdown locations={locations}
+            initialLocation={{
+              location_id: newItem.locationId,
+              name: newItem.locationName
+            }}
             onLocationIdUpdate={onLocationIdUpdate}/>
           <input type="hidden" name="locationId" value={newItem.locationId} required />
           <label>
