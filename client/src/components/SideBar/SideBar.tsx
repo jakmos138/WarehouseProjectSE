@@ -11,7 +11,19 @@ const SideBar = (props:any) => {
         <Link to='/orders'>
         <div className="orders">
             <img src={OrdersIcon} alt="" />
-            <p>Orders</p>
+            <p>Items</p>
+        </div>
+        </Link>
+        <Link to='/types'>
+        <div className="orders">
+            <img src={OrdersIcon} alt="" />
+            <p>Types</p>
+        </div>
+        </Link>
+        <Link to='/locations'>
+        <div className="orders">
+            <img src={OrdersIcon} alt="" />
+            <p>Locations</p>
         </div>
         </Link>
     </div>

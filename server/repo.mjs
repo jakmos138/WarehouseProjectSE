@@ -185,21 +185,21 @@ class Repo {
   getItems = function(cb) {
     sql.query(`SELECT I.item_index, T.item_id, T.name as t_name, T.description as t_desc, T.price, T.restricted_level as t_rl, L.location_id, L.name as l_name, L.description as l_desc, L.restricted_level as l_rl, I.details, I.quantity, I.restricted_level as i_rl FROM dbo.Items AS I
                 LEFT JOIN dbo.ItemTypes AS T ON I.item_id = T.item_id
-                LEFT JOIN dbo.Locations AS L ON I.location_id = L.location_id`)
+                LEFT JOIN dbo.Locations AS L ON I.location_id = L.location_id;`)
     .then(res => {
       let rs = res.recordset;
       let a = []
       rs.forEach(e => {
-        let ae = {id: e.item_index,
+        let ae = {item_index: e.item_index,
                   type: {
-                    id: e.item_id,
+                    item_id: e.item_id,
                     name: e.t_name,
                     description: e.t_desc,
                     price: e.price,
                     restricted_level: e.t_rl
                   },
                   location: {
-                    id: e.location_id,
+                    location_id: e.location_id,
                     name: e.l_name,
                     description: e.l_desc,
                     restricted_level: e.l_rl
@@ -243,16 +243,16 @@ class Repo {
       let rs = res.recordset;
       if (rs.length == 0) return cb(this.NOT_FOUND);
       let e = rs[0];
-      let ae = {id: e.item_index,
+      let ae = {item_index: e.item_index,
                 type: {
-                  id: e.item_id,
+                  item_id: e.item_id,
                   name: e.t_name,
                   description: e.t_desc,
                   price: e.price,
                   restricted_level: e.t_rl
                 },
                 location: {
-                  id: e.location_id,
+                  location_id: e.location_id,
                   name: e.l_name,
                   description: e.l_desc,
                   restricted_level: e.l_rl
@@ -352,9 +352,9 @@ class Repo {
       .input('property_id', sql.Int, property_id)
       .query(
         `WITH CTE AS (
-           SELECT item_id FROM dbo.Items WHERE item_index = 1
+           SELECT item_id FROM dbo.Items WHERE item_index = @item_index
            INTERSECT
-           SELECT item_id FROM dbo.ItemTypeProperties WHERE property_id = 2
+           SELECT item_id FROM dbo.ItemTypeProperties WHERE property_id = @property_id
          )
          SELECT CTE.item_id, IT.restricted_level FROM CTE LEFT JOIN dbo.ItemTypes AS IT ON CTE.item_id = IT.item_id;`,
       )
@@ -455,7 +455,7 @@ class Repo {
     sr.query(`WITH TCTE AS (
                 SELECT item_id, name, description, price, restricted_level AS t_rl
                 FROM dbo.ItemTypes
-                WHERE item_id = 1
+                WHERE item_id = @id
               )
               SELECT TCTE.*, ITP.property_id, ITP.name AS p_name, ITP.description AS p_desc, ITP.type AS p_type FROM TCTE
                 LEFT JOIN dbo.ItemTypeProperties AS ITP ON ITP.item_id = TCTE.item_id;`)
@@ -463,7 +463,7 @@ class Repo {
       let rs = res.recordset;
       if (rs.length == 0) return cb(this.NOT_FOUND);
       let e = rs[0];
-      let ae = {id: e.item_id,
+      let ae = {item_id: e.item_id,
         name: e.name,
         description: e.description,
         price: e.price,

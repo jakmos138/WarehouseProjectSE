@@ -15,7 +15,7 @@ router.get("/", checkLogin, (req, res) => {
   });
 });
 router.get("/:typeId", checkLogin, (req, res) => {
-  repo.getItemTypesById(req.params.typeId, (err, data) => {
+  repo.getItemTypeById(req.params.typeId, (err, data) => {
     repo.errorHandling(err, res, () => {
       sendSuccess(res, 200, data);
     })

@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './EditItem.css';
+import './EditType.css';
 
 const EditItem = ({ item, onItemEdited, onClose }) => {
   const [newItem, setNewItem] = useState({
-    itemIndex: item.item_index,
-    locationId: item.location.location_id, 
-    details: item.details, 
-    quantity: item.quantity,
-    restrictedLevel: item.restricted_level
-  });
+      typeId: item.item_id,
+      name: item.name, 
+      description: item.description, 
+      price: item.price,
+      restrictedLevel: item.restricted_level,
+    });
 
   const [error, setError] = useState(null);
 
@@ -25,18 +25,24 @@ const EditItem = ({ item, onItemEdited, onClose }) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("location_id", newItem.locationId);
-    formData.append("details", newItem.details);
-    formData.append("quantity", newItem.quantity);
+    formData.append("name", newItem.name);
+    formData.append("description", newItem.description);
+    formData.append("price", newItem.price);
     formData.append("restricted_level", newItem.restrictedLevel);
 
-    axios.put(`http://localhost:3000/api/items/${newItem.itemIndex}`, formData, {
+    axios.put(`http://localhost:3000/api/itemtypes/${newItem.typeId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       withCredentials: true,
     })
     .then((response) => {
       onItemEdited(response.data.data);
-      setNewItem({ itemIndex: '', locationId: '', details: '', quantity: '', restrictedLevel: '' });
+      setNewItem({
+        typeId: '', 
+        name: '', 
+        description: '', 
+        price: '',
+        restrictedLevel: '',
+      });
       onClose(); // Close modal after success
     })
     .catch((err) => {
@@ -51,16 +57,16 @@ const EditItem = ({ item, onItemEdited, onClose }) => {
         {error && <div className="error-message">{error}</div>}
         <form className='create-item-form' onSubmit={handleEditItem}>
           <label>
-            Location ID:
-            <input type="text" name="locationId" value={newItem.locationId} onChange={handleInputChange} required />
+            Name:
+            <input type="text" name="name" value={newItem.name} onChange={handleInputChange} required />
           </label>
           <label>
-            Details:
-            <input type="text" name="details" value={newItem.details} onChange={handleInputChange} required />
+            Description:
+            <input type="text" name="description" value={newItem.description} onChange={handleInputChange} required />
           </label>
           <label>
-            Quantity:
-            <input type="number" name="quantity" value={newItem.quantity} onChange={handleInputChange} required />
+            Price:
+            <input type="number" name="price" value={newItem.price} onChange={handleInputChange} required />
           </label>
           <label>
             Restricted Level:
