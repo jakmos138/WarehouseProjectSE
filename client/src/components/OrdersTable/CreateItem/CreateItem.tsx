@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './CreateItem.css';
+import CreateItemDropdown from './CreateItemDropdown/CreateItemDropdown';
 
 const CreateItem = ({ onItemCreated, onClose }) => {
   const [newItem, setNewItem] = useState({
@@ -51,6 +52,7 @@ const CreateItem = ({ onItemCreated, onClose }) => {
         <button className="close-btn" onClick={onClose}>✖</button>
         {error && <div className="error-message">{error}</div>}
         <form className='create-item-form' onSubmit={handleCreateItem}>
+          <CreateItemDropdown/>
           <label>
             Item ID:
             <input type="text" name="itemId" value={newItem.itemId} onChange={handleInputChange} required />
