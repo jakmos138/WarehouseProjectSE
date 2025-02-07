@@ -3,9 +3,9 @@ import axios from 'axios';
 import './CreateItem.css';
 import CreateItemDropdown from './CreateItemDropdown/CreateItemDropdown';
 
-const CreateItem = ({ onItemCreated, onClose }) => {
+const CreateItem = ({ onItemCreated, onClose, types, locations }) => {
   const [newItem, setNewItem] = useState({
-    itemId: '', 
+    itemIndex: '', 
     locationId: '', 
     details: '', 
     quantity: '',
@@ -26,7 +26,7 @@ const CreateItem = ({ onItemCreated, onClose }) => {
     e.preventDefault();
 
     const formData = new FormData();
-    formData.append("item_id", newItem.itemId);
+    formData.append("item_id", newItem.itemIndex);
     formData.append("location_id", newItem.locationId);
     formData.append("details", newItem.details);
     formData.append("quantity", newItem.quantity);
@@ -38,7 +38,7 @@ const CreateItem = ({ onItemCreated, onClose }) => {
     })
     .then((response) => {
       onItemCreated(response.data.data);
-      setNewItem({ itemId: '', locationId: '', details: '', quantity: '', restrictedLevel: '' });
+      setNewItem({ itemIndex: '', locationId: '', details: '', quantity: '', restrictedLevel: '' });
       onClose(); // Close modal after success
     })
     .catch((err) => {
@@ -46,21 +46,30 @@ const CreateItem = ({ onItemCreated, onClose }) => {
     });
   };
 
+  const onTypeIdUpdate = (e) => {
+    setNewItem({
+      ...newItem,
+      itemIndex: e
+    });
+  }
+
+  const onLocationIdUpdate = (e) => {
+    setNewItem({
+      ...newItem,
+      locationId: e
+    });
+  }
+
   return (
     <div className="modal-overlay">
       <div className="create-item-modal">
         <button className="close-btn" onClick={onClose}>✖</button>
         {error && <div className="error-message">{error}</div>}
         <form className='create-item-form' onSubmit={handleCreateItem}>
-          <CreateItemDropdown/>
-          <label>
-            Item ID:
-            <input type="text" name="itemId" value={newItem.itemId} onChange={handleInputChange} required />
-          </label>
-          <label>
-            Location ID:
-            <input type="text" name="locationId" value={newItem.locationId} onChange={handleInputChange} required />
-          </label>
+          <CreateItemDropdown types={types} locations={locations}
+            onTypeIdUpdate={onTypeIdUpdate} onLocationIdUpdate={onLocationIdUpdate}/>
+          <input type="hidden" name="itemId" value={newItem.itemIndex} required />
+          <input type="hidden" name="locationId" value={newItem.locationId} required />
           <label>
             Details:
             <input type="text" name="details" value={newItem.details} onChange={handleInputChange} required />

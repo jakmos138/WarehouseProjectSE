@@ -14,7 +14,7 @@ const OrdersTable = () => {
     const [showCreateForm, setShowCreateForm] = useState(false); // State to manage form visibility
     const [showEditForm, setShowEditForm] = useState(false); // State to manage form visibility
     const [editFormItem, setEditFormItem] = useState({}) // for edit form
-    const [itemTypes, setItemTypes] = useState([]) // to be used in selects of item types
+    const [itemTypes, setItemTypes] = useState([]) // only ID and name, to be used in selects of item types
     const [locations, setLocations] = useState([]) // ditto
 
 
@@ -116,13 +116,17 @@ const OrdersTable = () => {
             {/* Modal for CreateItem */}
             {showCreateForm && (
                 <div className="modal-overlay">
-                    <CreateItem onItemCreated={handleItemCreated} onClose={() => setShowCreateForm(false)} />
+                    <CreateItem onItemCreated={handleItemCreated} onClose={() => setShowCreateForm(false)}
+                        types={itemTypes} locations={locations}
+                    />
                 </div>
             )}
 
             {showEditForm && (
                 <div className="modal-overlay">
-                    <EditItem item={editFormItem} onItemEdited={handleItemEdited} onClose={() => setShowEditForm(false)} />
+                    <EditItem item={editFormItem} onItemEdited={handleItemEdited} onClose={() => setShowEditForm(false)}
+                        locations={locations}
+                    />
                 </div>
             )}
 

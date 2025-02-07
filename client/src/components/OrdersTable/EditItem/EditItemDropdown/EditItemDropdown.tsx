@@ -1,36 +1,12 @@
 import { useState } from "react";
-import "./CreateItemDropdown.css";
+import "./EditItemDropdown.css";
 
-const CreateItemDropdown = ({types, locations, onTypeIdUpdate, onLocationIdUpdate}) => {
-  const [selectedType, setSelectedType] = useState({id: 0, name: "Select type"});
+const EditItemDropdown = ({locations, onLocationIdUpdate}) => {
   const [selectedLocation, setSelectedLocation] = useState({id: 0, name: "Select location"});
-  const [isTypeOpen, setIsTypeOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(false);
 
   return (
     <div className="dropdown-container">
-      <div className="dropdown">
-        <button className="dropdown-button" onClick={() => setIsTypeOpen(!isTypeOpen)}>
-          {selectedType.name}
-        </button>
-        {isTypeOpen && (
-          <ul className="dropdown-list">
-            {types.map((type) => (
-              <li
-                key={type.item_id}
-                className="dropdown-item"
-                onClick={() => {
-                  setSelectedType(type);
-                  setIsTypeOpen(false);
-                  onTypeIdUpdate(type.item_id); // to update hidden input
-                }}
-              >
-                {type.name}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
       <div className="dropdown">
         <button className="dropdown-button" onClick={() => setIsLocationOpen(!isLocationOpen)}>
           {selectedLocation.name}
@@ -57,4 +33,4 @@ const CreateItemDropdown = ({types, locations, onTypeIdUpdate, onLocationIdUpdat
   );
 };
 
-export default CreateItemDropdown;
+export default EditItemDropdown;

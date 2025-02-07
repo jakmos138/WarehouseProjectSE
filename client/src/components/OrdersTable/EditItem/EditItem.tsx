@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import './EditItem.css';
+import EditItemDropdown from './EditItemDropdown/EditItemDropdown';
 
-const EditItem = ({ item, onItemEdited, onClose }) => {
+const EditItem = ({ item, onItemEdited, onClose, locations }) => {
   const [newItem, setNewItem] = useState({
     itemIndex: item.item_index,
     locationId: item.location.location_id, 
@@ -44,16 +45,22 @@ const EditItem = ({ item, onItemEdited, onClose }) => {
     });
   };
 
+  const onLocationIdUpdate = (e) => {
+    setNewItem({
+      ...newItem,
+      locationId: e
+    });
+  }
+
   return (
     <div className="modal-overlay">
       <div className="create-item-modal">
         <button className="close-btn" onClick={onClose}>✖</button>
         {error && <div className="error-message">{error}</div>}
         <form className='create-item-form' onSubmit={handleEditItem}>
-          <label>
-            Location ID:
-            <input type="text" name="locationId" value={newItem.locationId} onChange={handleInputChange} required />
-          </label>
+          <EditItemDropdown locations={locations}
+            onLocationIdUpdate={onLocationIdUpdate}/>
+          <input type="hidden" name="locationId" value={newItem.locationId} required />
           <label>
             Details:
             <input type="text" name="details" value={newItem.details} onChange={handleInputChange} required />
