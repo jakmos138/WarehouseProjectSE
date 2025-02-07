@@ -1,4 +1,4 @@
-.sidebar{
+.sidebar {
     background-color: white;
     position: fixed;
     top: 61px;
@@ -7,32 +7,9 @@
     width: 280px;
     border-right: solid 2px rgba(0, 0, 0, 0.1);
     z-index: 100;
-    
 }
-.dashboard{
-    height: 48px;
-    transition: all 0.3s ease;
-    margin-top: 16px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    border-radius: 8px;
-    padding-left: 16px;
-    cursor: pointer;
-}
-.dashboard p{
 
-}
-.dashboard:hover{
-    background-color: rgba(57, 91, 100, 0.35);
-    border-radius: 12px;
-    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-    margin: 16px 16px 0 16px;
-}
-.dashboard img{
-    margin-right: 8px;
-}
-.orders{
+.sidebar-item {
     height: 48px;
     transition: all 0.3s ease;
     margin-top: 16px;
@@ -43,17 +20,26 @@
     padding-left: 16px;
     cursor: pointer;
 }
-.orders:hover{
+
+.sidebar-item p {
+    margin: 0;
+}
+
+.sidebar-item img {
+    margin-right: 8px;
+    height: 24px;
+    width: auto;
+}
+
+.sidebar-item:hover,
+.sidebar-item.active {
     background-color: rgba(57, 91, 100, 0.35);
     border-radius: 12px;
     box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
     margin: 16px 16px 0 16px;
 }
-.orders img{
-    margin-right: 8px;
-}
+
 a {
     text-decoration: none;
     color: black;
 }
-

@@ -15,6 +15,7 @@ nav:
         - UI Design: ui-design.md
         - Use Case Diagram: use-case.md
         - UML Diagram: uml-diagram.md
+  - App Setup: setup.md
   - Frontend:
       - Overview: frontend-overview.md
       - Components:

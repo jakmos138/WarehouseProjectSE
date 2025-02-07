@@ -1,23 +1,19 @@
-import './Order.css';
+import './Location.css';
 import remove from '../../../assets/remove.png';
 import EditIcon from '../../../assets/edit.png';
 
-interface OrderProps {
-  orderName: string;
-  location: string;
-  details: string;
-  quantity: number;
+interface LocationProps {
+  name: string;
+  description: string;
   deleteItem: () => void;  // The delete function is passed as a prop
   updateItem: () => void;
 }
 
-const Order: React.FC<OrderProps> = (props) => {
+const Location: React.FC<LocationProps> = (props) => {
   return (
     <tr>
-      <td>{props.orderName}</td>
-      <td>{props.location}</td>
-      <td>{props.details}</td>
-      <td>{props.quantity}</td>
+      <td>{props.name}</td>
+      <td>{props.description}</td>
       <td>
         <button className='delete-btn' onClick={props.deleteItem}>
           <img src={remove} alt="Delete" />
@@ -32,4 +28,4 @@ const Order: React.FC<OrderProps> = (props) => {
   );
 };
 
-export default Order;
+export default Location;

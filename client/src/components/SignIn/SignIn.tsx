@@ -19,13 +19,12 @@ const SignIn = (props: any) => {
         { email: username, password },
         {
           headers: { 'Content-Type': 'application/json' },
-          withCredentials: true,  // Enable sending and receiving cookies
+          withCredentials: true,
         }
       );
 
       console.log(`${isSignUp ? 'Registration' : 'Login'} successful:`, response.data);
 
-      // Assume the backend sets a session cookie, no need to store a token manually
       props.setSignedIn(true);
       alert(`${isSignUp ? 'Registration' : 'Login'} Successful!`);
       navigate('/');
