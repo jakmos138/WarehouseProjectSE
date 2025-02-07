@@ -17,6 +17,8 @@ const OrdersTable = () => {
     const [itemTypes, setItemTypes] = useState([]) // to be used in selects of item types
     const [locations, setLocations] = useState([]) // ditto
 
+
+
     useEffect(() => {
         let i = 3;
         axios.get('http://localhost:3000/api/items/', {

@@ -1,6 +1,8 @@
 import './SideBar.css'
 import DashboardIcon from '../../assets/dashboard_icon.svg'
 import OrdersIcon from '../../assets/orders_icon.svg'
+import LocationsIcon from '../../assets/map.png'
+import TypesIcon from '../../assets/list.png'
 import { Link } from 'react-router'
 
 const SideBar = (props:any) => {
@@ -16,13 +18,13 @@ const SideBar = (props:any) => {
         </Link>
         <Link to='/types'>
         <div className="orders">
-            <img src={OrdersIcon} alt="" />
+            <img src={TypesIcon} alt="" />
             <p>Types</p>
         </div>
         </Link>
         <Link to='/locations'>
         <div className="orders">
-            <img src={OrdersIcon} alt="" />
+            <img src={LocationsIcon} alt="" />
             <p>Locations</p>
         </div>
         </Link>
