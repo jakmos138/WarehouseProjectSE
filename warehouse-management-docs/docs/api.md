@@ -85,6 +85,7 @@ The following success status codes are typically returned by endpoints with the 
 - `200 OK` **GET**;
 - `201 Created` **POST, PUT** - the response typically contains the ID of the created resource;
 - `204 No Content` **DELETE**
+
 Exceptions from this rule are specified per endpoint.
 
 ## Error responses
@@ -128,27 +129,25 @@ Gets all item batches in the inventory.
 
 **Response Data**
 ```
-{
-    items: [{
-        item_index: int,
-        item_type: {
-            item_id: int,
-            name: string,
-            description: string,
-            price: decimal(2),
-            restricted_level: int
-        },
-        location: {
-            location_id: int,
-            name: string,
-            description: string,
-            restricted_level: int
-        },
-        details: string,
-        quantity: decimal(4),
+[{
+    item_index: int,
+    item_type: {
+        item_id: int,
+        name: string,
+        description: string,
+        price: decimal(2),
         restricted_level: int
-    }]
-}
+    },
+    location: {
+        location_id: int,
+        name: string,
+        description: string,
+        restricted_level: int
+    },
+    details: string,
+    quantity: decimal(4),
+    restricted_level: int
+}]
 ```
 
 ### POST `/api/items`
@@ -181,7 +180,7 @@ Gets a specific item batch and all its property values.
 ```
 {
     item_index: int,
-    item_type: {
+    type: {
         item_id: int,
         name: string,
         description: string,
@@ -206,6 +205,7 @@ Gets a specific item batch and all its property values.
 }
 ```
 The possible property `value`s depend on the property's `type`:
+
 - `"boolean"` - `"true"` or `"false"`
 - `"int"` or `"decimal"` - string representation of number
 - `"string"` - any string
@@ -286,15 +286,13 @@ Gets all defined item types.
 
 **Response Data**
 ```
-{
-    item_types: [{
-        item_id: int,
-        name: string,
-        description: string,
-        price: decimal(2),
-        restricted_level: int
-    }]
-}
+[{
+    item_id: int,
+    name: string,
+    description: string,
+    price: decimal(2),
+    restricted_level: int
+}]
 ```
 
 ### POST `/api/itemtypes`
@@ -427,14 +425,12 @@ Gets all locations.
 
 **Response Data**
 ```
-{
-    locations: [{
-        location_id: int,
-        name: string,
-        description: string,
-        restricted_level: int
-    }]
-}
+[{
+    location_id: int,
+    name: string,
+    description: string,
+    restricted_level: int
+}]
 ```
 
 ### POST `/api/locations`

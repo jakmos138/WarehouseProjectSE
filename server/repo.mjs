@@ -231,7 +231,7 @@ class Repo {
               SELECT
                 ICTE.item_index, ICTE.details, ICTE.quantity, ICTE.restricted_level AS i_rl, 
                 IT.item_id, IT.name AS t_name, IT.description AS t_desc, IT.price, IT.restricted_level AS t_rl,
-                L.location_id, L.name AS l_name, L.description AS l_desc,
+                L.location_id, L.name AS l_name, L.description AS l_desc, L.restricted_level AS l_rl,
                 ITP.property_id, ITP.name AS p_name, ITP.description AS p_desc, ITP.type AS p_type,
                 IP.value AS p_value
                 FROM ICTE
