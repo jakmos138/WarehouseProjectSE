@@ -5,7 +5,7 @@ const LocalStrategy = passport_local.Strategy;
 import crypto from 'node:crypto';
 import bodyParser from 'body-parser';
 import formidable, { errors as formidableErrors } from 'formidable';
-import { secondaryParseFields } from "../fieldparse.mjs";
+import { secondaryParseFields, secondaryParseFieldsNoArray } from "../fieldparse.mjs";
 import { repo } from '../repo.mjs';
 import { sendSuccess, sendError } from '../resutil.mjs';
 
@@ -53,7 +53,8 @@ let router = express.Router();
 let signup = function (req, res, next) {
   const form = formidable({});
   form.parse(req, (err, fields, files) => {
-    let formData = secondaryParseFields(fields, "username", "email", "password");
+    let formData = secondaryParseFieldsNoArray(fields, "email", "password");
+    formData.username = formData.email; // temp
     console.log("Signup request received:", formData.username);
     crypto.pbkdf2(formData.password, 'alts', 2**18, 64, 'sha256', function(err, hashed) {
       if (err) { return next(err); }

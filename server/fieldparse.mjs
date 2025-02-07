@@ -7,8 +7,17 @@ const secondaryParseFields = function(data, ...names) {
     return out;
 }
 
+const secondaryParseFieldsNoArray = function(data, ...names) {
+    let out = {}
+    names.forEach(e => {
+        if (data[e] !== undefined) out[e] = data[e];
+        else out[e] = null;
+    });
+    return out;
+}
+
 const validateProperty = function(value, type) {
 
 }
 
-export { secondaryParseFields, validateProperty };
+export { secondaryParseFields, secondaryParseFieldsNoArray, validateProperty };
