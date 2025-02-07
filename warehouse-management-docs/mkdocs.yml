@@ -1,6 +1,6 @@
 site_name: Warehouse Management Documentation
 theme:
-  name: material
+  name: readthedocs
 
 nav:
   - Home: index.md
@@ -8,11 +8,12 @@ nav:
   - Requirements:
       - Functional Requirements: functional-requirements.md
       - Non-Functional Requirements: non-functional-requirements.md
-  - Architecture: architecture.md
-  - Business Logic: business-logic.md
-  - Database Model: database.md
-  - UI Design: ui-design.md
-  - Use Case Diagram: use-case.md
+  - System design:
+        - Architecture: architecture.md
+        - Business Logic: business-logic.md
+        - Database Model: database.md
+        - UI Design: ui-design.md
+        - Use Case Diagram: use-case.md
   - Frontend:
       - Overview: frontend-overview.md
       - Components:
