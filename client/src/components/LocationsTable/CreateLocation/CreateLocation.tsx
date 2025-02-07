@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './EditType.css';
+import './CreateLocation.css';
 
-const EditType = ({ item, onItemEdited, onClose }) => {
+const CreateLocation = ({ onItemCreated, onClose }) => {
   const [newItem, setNewItem] = useState({
-      typeId: item.item_id,
-      name: item.name, 
-      description: item.description, 
-      price: item.price,
-      restrictedLevel: item.restricted_level,
-    });
+    name: '', 
+    description: '',
+    restrictedLevel: '',
+  });
 
   const [error, setError] = useState(null);
 
@@ -21,32 +19,29 @@ const EditType = ({ item, onItemEdited, onClose }) => {
     });
   };
 
-  const handleEditItem = (e) => {
+  const handleCreateItem = (e) => {
     e.preventDefault();
 
     const formData = new FormData();
     formData.append("name", newItem.name);
     formData.append("description", newItem.description);
-    formData.append("price", newItem.price);
     formData.append("restricted_level", newItem.restrictedLevel);
 
-    axios.put(`http://localhost:3000/api/itemtypes/${newItem.typeId}`, formData, {
+    axios.post('http://localhost:3000/api/locations/', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       withCredentials: true,
     })
     .then((response) => {
-      onItemEdited(response.data.data);
+      onItemCreated(response.data.data);
       setNewItem({
-        typeId: '', 
         name: '', 
         description: '', 
-        price: '',
         restrictedLevel: '',
       });
       onClose(); // Close modal after success
     })
     .catch((err) => {
-      setError("Error editing item");
+      setError("Error creating item");
     });
   };
 
@@ -55,7 +50,7 @@ const EditType = ({ item, onItemEdited, onClose }) => {
       <div className="create-item-modal">
         <button className="close-btn" onClick={onClose}>✖</button>
         {error && <div className="error-message">{error}</div>}
-        <form className='create-item-form' onSubmit={handleEditItem}>
+        <form className='create-item-form' onSubmit={handleCreateItem}>
           <label>
             Name:
             <input type="text" name="name" value={newItem.name} onChange={handleInputChange} required />
@@ -65,18 +60,14 @@ const EditType = ({ item, onItemEdited, onClose }) => {
             <input type="text" name="description" value={newItem.description} onChange={handleInputChange} required />
           </label>
           <label>
-            Price:
-            <input type="number" name="price" value={newItem.price} onChange={handleInputChange} required />
-          </label>
-          <label>
             Restricted Level:
             <input type="number" name="restrictedLevel" value={newItem.restrictedLevel} onChange={handleInputChange} required />
           </label>
-          <button type="submit">Update</button>
+          <button type="submit">Create</button>
         </form>
       </div>
     </div>
   );
 };
 
-export default EditType;
+export default CreateLocation;

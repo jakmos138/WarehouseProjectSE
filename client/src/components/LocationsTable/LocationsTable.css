@@ -1,4 +1,4 @@
-.orders-table{
+.locations-table{
     width: 1200px;
     height: auto;
     margin: 60px 64px 32px 282px;
@@ -26,10 +26,10 @@ thead th {
     font-weight: 500;
     background-color: #eaeaea;
 }
-.orders-table tr{
+.locations-table tr{
     height: 60px;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     align-items: center;
     text-align: center;
     justify-content: center;

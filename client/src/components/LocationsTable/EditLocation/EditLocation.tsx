@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './EditType.css';
+import './EditLocation.css';
 
-const EditType = ({ item, onItemEdited, onClose }) => {
+const EditLocation = ({ item, onItemEdited, onClose }) => {
   const [newItem, setNewItem] = useState({
-      typeId: item.item_id,
+      locationId: item.location_id,
       name: item.name, 
       description: item.description, 
-      price: item.price,
       restrictedLevel: item.restricted_level,
     });
 
@@ -27,20 +26,18 @@ const EditType = ({ item, onItemEdited, onClose }) => {
     const formData = new FormData();
     formData.append("name", newItem.name);
     formData.append("description", newItem.description);
-    formData.append("price", newItem.price);
     formData.append("restricted_level", newItem.restrictedLevel);
 
-    axios.put(`http://localhost:3000/api/itemtypes/${newItem.typeId}`, formData, {
+    axios.put(`http://localhost:3000/api/locations/${newItem.locationId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
       withCredentials: true,
     })
     .then((response) => {
       onItemEdited(response.data.data);
       setNewItem({
-        typeId: '', 
+        locationId: '', 
         name: '', 
         description: '', 
-        price: '',
         restrictedLevel: '',
       });
       onClose(); // Close modal after success
@@ -65,10 +62,6 @@ const EditType = ({ item, onItemEdited, onClose }) => {
             <input type="text" name="description" value={newItem.description} onChange={handleInputChange} required />
           </label>
           <label>
-            Price:
-            <input type="number" name="price" value={newItem.price} onChange={handleInputChange} required />
-          </label>
-          <label>
             Restricted Level:
             <input type="number" name="restrictedLevel" value={newItem.restrictedLevel} onChange={handleInputChange} required />
           </label>
@@ -79,4 +72,4 @@ const EditType = ({ item, onItemEdited, onClose }) => {
   );
 };
 
-export default EditType;
+export default EditLocation;

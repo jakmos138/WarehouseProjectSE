@@ -1,8 +1,9 @@
+import LocationsTable from "../components/LocationsTable/LocationsTable"
 import OrdersTable from "../components/OrdersTable/OrdersTable"
 
 const Locations = () => {
   return (
-    <h1>WIP</h1>
+    <LocationsTable/>
   )
 }
 

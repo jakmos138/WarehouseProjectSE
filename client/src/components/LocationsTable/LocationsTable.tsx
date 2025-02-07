@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Type from './Type/Type';
-import './TypesTable.css';
-import CreateType from './CreateType/CreateType';
-import EditType from './EditType/EditType';
+import Location from './Location/Location';
+import './LocationsTable.css';
+import CreateLocation from './CreateLocation/CreateLocation';
+import EditLocation from './EditLocation/EditLocation';
 
 
 
-const TypesTable = () => {
+const LocationsTable = () => {
     const [data, setData] = useState([]);  // State to store fetched data
     const [loading, setLoading] = useState(true); // State to manage loading state
     const [error, setError] = useState(null); // State to handle errors
@@ -16,7 +16,7 @@ const TypesTable = () => {
     const [editFormItem, setEditFormItem] = useState({}) // for edit form
 
     useEffect(() => {
-        axios.get('http://localhost:3000/api/itemtypes/', {
+        axios.get('http://localhost:3000/api/locations/', {
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true,
         })
@@ -26,18 +26,18 @@ const TypesTable = () => {
             setLoading(false);
         })
         .catch((err) => {
-            setError("Error fetching data (item types)");
+            setError("Error fetching data (locations)");
             setLoading(false);
         });
     }, []);
 
     const deleteItem = (itemId) => {
-        axios.delete(`http://localhost:3000/api/itemTypes/${itemId}`, {
+        axios.delete(`http://localhost:3000/api/locations/${itemId}`, {
             headers: { 'Content-Type': 'application/json' },
             withCredentials: true,
         })
         .then((response) => {
-            setData(data.filter(item => item.item_id !== itemId));
+            setData(data.filter(item => item.location_id !== itemId));
         })
         .catch((err) => {
             setError("Error deleting item");
@@ -59,7 +59,7 @@ const TypesTable = () => {
 
     const handleItemEdited = (editedItem) => {
         let e = [...data].map(f => {
-            if (f.item_id === editedItem.item_id) return editedItem;
+            if (f.location_id === editedItem.location_id) return editedItem;
             else return f;
         });
         setData(e);
@@ -76,10 +76,10 @@ const TypesTable = () => {
     }
 
     return (
-        <div className="types-table">
+        <div className="locations-table">
             <div className="create-item-button-container">
             <button onClick={() => setShowCreateForm(!showCreateForm)} className="create-item-btn">
-                {showCreateForm ? 'Cancel' : 'Create Item Type'}
+                {showCreateForm ? 'Cancel' : 'Create Location'}
             </button>
             </div>
 
@@ -87,13 +87,13 @@ const TypesTable = () => {
             {/* Modal for CreateItem */}
             {showCreateForm && (
                 <div className="modal-overlay">
-                    <CreateType onItemCreated={handleItemCreated} onClose={() => setShowCreateForm(false)} />
+                    <CreateLocation onItemCreated={handleItemCreated} onClose={() => setShowCreateForm(false)} />
                 </div>
             )}
 
             {showEditForm && (
                 <div className="modal-overlay">
-                    <EditType item={editFormItem} onItemEdited={handleItemEdited} onClose={() => setShowEditForm(false)} />
+                    <EditLocation item={editFormItem} onItemEdited={handleItemEdited} onClose={() => setShowEditForm(false)} />
                 </div>
             )}
 
@@ -102,7 +102,6 @@ const TypesTable = () => {
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
-                        <th>Price</th>
                         <th>Delete</th>
                         <th>Edit</th>
                     </tr>
@@ -110,18 +109,17 @@ const TypesTable = () => {
                 <tbody>
                     {data.length > 0 ? (
                         data.map((item, index) => (
-                            <Type
+                            <Location
                                 key={index}
                                 name={item.name}
                                 description={item.description}
-                                price={item.price}
-                                deleteItem={() => deleteItem(item.item_id)}
+                                deleteItem={() => deleteItem(item.location_id)}
                                 updateItem={() => showUpdateItem(item)}
                             />
                         ))
                     ) : (
                         <tr>
-                            <td colSpan="5">No types found</td>
+                            <td colSpan="4">No types found</td>
                         </tr>
                     )}
                 </tbody>
@@ -130,4 +128,4 @@ const TypesTable = () => {
     );
 };
 
-export default TypesTable;
+export default LocationsTable;
