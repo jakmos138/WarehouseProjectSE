@@ -69,6 +69,8 @@
 
 .create-item-form button {
     width: 160px;
+    height: initial;
+    padding: 12px 12px 10px 12px;
     padding: 12px;
     background-color: #4CAF50;
     color: white;
