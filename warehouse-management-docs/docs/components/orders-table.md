@@ -1,33 +1,33 @@
-# Orders Table Component
+# Orders Page
 
 ## **Overview**
-The **Orders Table Component** is responsible for **displaying warehouse inventory data** and allowing users to **add or delete items**. It fetches **real-time data** from the backend and updates dynamically.
+The **Orders Page** is where users can **view, manage, and track warehouse orders**. It displays a table of orders and their corresponding **stock availability, processing time, and delivery status**.
 
 ## **Structure**
-The **Orders Table** consists of:  
-- **Table Headers**: Displays column names such as **Product Name, Availability, Delivery Status, Price, and Action**.  
-- **Order Rows**: Each row represents an item with its **description, price, and stock location**.  
-- **Delete Button**: Allows users to **remove an item** from the inventory.  
-- **Create Item Button**: Opens a modal for adding new inventory items.
+- **Orders Table**: Displays all **current orders**, fetched from the database.
+- **Status Indicators**: Color-coded labels for **stock availability**.
+- **Action Buttons**: Allows users to **manage orders** with:
+  - **Create Item**: Adds new inventory items.
+  - **Edit Item**: Modifies existing inventory items.
+  - **Delete Item**: Removes items from the system.
 
 ## **Code Implementation**
-- **CSS File:** `OrdersTable.css`
-  - Defines **table styling**, including border, padding, and color scheme.  
-  - Uses **grid layout** for aligning rows and columns.  
-  - Highlights stock availability with different colors (`green` for in stock, `orange` for out of stock).
+- **TSX File:** `Orders.tsx`
+  - Imports and renders the `OrdersTable` component.
+  - Uses **React’s state hooks (`useState`)** to track order modifications.
+  - Handles **CRUD (Create, Read, Update, Delete)** operations.
 
-- **TSX File:** `OrdersTable.tsx`  
-  - **Fetches order data** from the backend API (`http://localhost:3000/api/items/`).  
-  - Uses **React’s `useEffect` and `useState` hooks** to update the table dynamically.  
-  - **Implements the `CreateItem` component**, allowing users to add new items.  
-  - **Handles item deletion** via `deleteItem(itemId)`, which makes an API request to remove the item.
-
-## **New Feature: Create Item**  
-The `CreateItem` component allows users to **add new warehouse items** using a modal form.  
-- Clicking **"Create Item"** opens the modal.  
-- Users enter **Item ID, Location, Details, Quantity, and Restricted Level**.  
-- The item is **sent to the backend** and added to the table dynamically.
+## **New Feature: Edit Item**
+The **Edit Item** functionality allows users to update warehouse stock information.  
+- Clicking the **"Edit" button** opens a modal where users can update item details.  
+- Users can modify:  
+  - **Location ID**  
+  - **Details**  
+  - **Quantity**  
+  - **Restricted Level**  
+- The updated item is **sent to the backend via an API request (`PUT /items/{id}`)**.
 
 ## **Usage**
 The `OrdersTable` component is used in:  
-- **Orders Page** (`orders.md`), where users can manage inventory and track item statuses.
+- **Orders Page** (`orders.md`), where users can manage inventory and track item statuses.  
+- The `CreateItem` and `EditItem` modals allow warehouse staff to **add or update stock details** efficiently.
